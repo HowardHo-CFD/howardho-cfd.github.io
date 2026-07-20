@@ -4,14 +4,6 @@ defaultContentLanguage = "en"
 title = "Dr. Howard Haonan Ho"
 theme = "blowfish"
 
-[params]
-  isoCode = "en"
-  displayName = "English"
-
-[params.homepage]
-  layout = "page"  # or keep as is
-  showRecent = false
-
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]

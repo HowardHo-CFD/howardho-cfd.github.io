@@ -32,3 +32,21 @@ weight = 40
 name = "Gallery"
 pageRef = "gallery"
 weight = 50
+
+[[main]]
+  identifier = "google_scholar"
+  pre = "link"
+  url = "https://scholar.google.ca/citations?user=LVaDiJ0AAAAJ&hl=en"
+  weight = 40
+
+[[main]]
+  identifier = "github"
+  pre = "github"
+  url = "https://github.com/HowardHo-CFD?tab=repositories"
+  weight = 50
+
+[[main]]
+  identifier = "youtube"
+  pre = "youtube"
+  url = "https://www.youtube.com/@HowardHo-n7i"
+  weight = 60
