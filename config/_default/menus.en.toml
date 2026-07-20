@@ -4,7 +4,7 @@ pageRef = "/"
 weight = 1
 
 [[main]]
-name = "About"
+name = "Biography"
 pageRef = "about"
 weight = 10
 
@@ -18,10 +18,10 @@ name = "Publications"
 pageRef = "publications"
 weight = 20
 
-[[main]]
-name = "Projects"
-pageRef = "projects"
-weight = 30
+#[[main]]
+#name = "Projects"
+#pageRef = "projects"
+#weight = 30
 
 [[main]]
 name = "Teaching"
@@ -29,24 +29,23 @@ pageRef = "teaching"
 weight = 40
 
 [[main]]
+  parent = "Teaching"
+  name = "Dynamics (MIE 100)"
+  pageRef = "teaching/dynamics"
+  weight = 2
+
+[[main]]
+  parent = "Teaching"
+  name = "Fluids (MIE 312)"
+  pageRef = "teaching/fluids"
+  weight = 3
+
+[[main]]
 name = "Gallery"
 pageRef = "gallery"
 weight = 50
 
 [[main]]
-  identifier = "google_scholar"
-  pre = "link"
-  url = "https://scholar.google.ca/citations?user=LVaDiJ0AAAAJ&hl=en"
-  weight = 40
-
-[[main]]
-  identifier = "github"
-  pre = "github"
-  url = "https://github.com/HowardHo-CFD?tab=repositories"
-  weight = 50
-
-[[main]]
-  identifier = "youtube"
-  pre = "youtube"
-  url = "https://www.youtube.com/@HowardHo-n7i"
-  weight = 60
+  name = "Posts"
+  pageRef = "posts"
+  weight = 10

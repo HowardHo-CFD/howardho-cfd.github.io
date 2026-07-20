@@ -8,7 +8,7 @@ title = "Dr. Howard Haonan Ho"
   isoCode = "en"
   rtl = false
   description = "My awesome website"
-  # copyright = "(c) 2026 Howard Ho"
+  copyright = "© 2026 Howard Haonan Ho"
   dateFormat = "2 January 2006"
 
 [params.author]
@@ -17,8 +17,8 @@ title = "Dr. Howard Haonan Ho"
   #headline = "This is my website with my links"
   # bio = "A little bit about you"
    links = [
-     { linkedin = "https://www.linkedin.com/in/howard-haonan-ho/" },
      { google-scholar = "https://scholar.google.com/citations?user=LVaDiJ0AAAAJ&hl=en" },
      { github = "https://github.com/nunocoracao/blowfish" },
+     { linkedin = "https://www.linkedin.com/in/howard-haonan-ho/" },
      { youtube = "https://www.youtube.com/@HowardHo-n7i" }
    ]

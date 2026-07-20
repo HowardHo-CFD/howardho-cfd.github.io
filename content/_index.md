@@ -1,17 +1,18 @@
 ---
-title: ""
-showTitle: false
-showDate: false
-showReadingTime: false
-showWordCount: false
+title: "Posts"
+draft: false
+
+showDate : false
+showDateUpdated : false
+showHeadingAnchors : false
+showPagination : false
+showReadingTime : false
+showTableOfContents : true
+showTaxonomies : false 
+showWordCount : false
+showSummary : false
+sharingLinks : false
+
 ---
-
-## Research Interests
-
-- Computational fluid dynamics
-- Turbulence modelling
-- Active Flow Control
-- Bluff Body Aerodynamics
-- Physics-Informed Neural Networks
 
 
