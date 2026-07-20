@@ -1,0 +1,29 @@
+[[main]]
+name = "Home"
+pageRef = "/"
+weight = 1
+
+[[main]]
+name = "About"
+pageRef = "about"
+weight = 10
+
+[[main]]
+name = "Publications"
+pageRef = "publications"
+weight = 20
+
+[[main]]
+name = "Projects"
+pageRef = "projects"
+weight = 30
+
+[[main]]
+name = "Teaching"
+pageRef = "teaching"
+weight = 40
+
+[[main]]
+name = "CV"
+pageRef = "cv"
+weight = 50
