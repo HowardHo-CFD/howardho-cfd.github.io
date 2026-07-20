@@ -8,15 +8,19 @@ showWordCount: false
 
 Course materials for Fluid Mechanics.
 
-## Slides
-
-- [Tutorial 2 - Surface Effects and Viscometer](/files/fluids/Tutorial-2.pdf)
-
 ## Interactive Tools
 
-- [Buoyancy Simulator](/teaching/fluids/interactive-tools/buoyancy/)
+- [Buoyancy Simulator](interactive-tools/buoyancy/)
+
+## Slides
+
+- [Tutorial 2 - Surface Effects and Viscometer](../../files/fluids/Tutorial-2.pdf)
+
+## Tutorial Handouts
+
+- [Tutorial 2 - Surface Effects and Viscometer](../../files/fluids/Tutorial-2.pdf)
 
 
-## Supplementary Materials
 
-- [Course Syllabus](/files/fluids/syllabus.pdf)
+
+
