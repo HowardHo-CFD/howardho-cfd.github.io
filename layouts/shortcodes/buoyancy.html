@@ -1,0 +1,245 @@
+
+<style>
+  #wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px 18px 8px;
+    box-sizing: border-box;
+  }
+  canvas {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  #controls {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  #controls label {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+  }
+  #depthSlider {
+    flex: 1;
+  }
+  #depthValue {
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    color: #333;
+    min-width: 70px;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<div id="wrap">
+  <canvas id="canvas" width="1000" height="600"></canvas>
+  <div id="controls">
+    <label for="depthSlider">Depth (m)</label>
+    <input type="range" id="depthSlider" min="-1.0" max="3.0" step="0.025" value="0.25">
+    <span id="depthValue">0.25 m</span>
+  </div>
+</div>
+
+<script>
+(function () {
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const slider = document.getElementById("depthSlider");
+  const depthLabel = document.getElementById("depthValue");
+
+  // ---- Constants (mirrors the original Python model) ----
+  const cubeSide = 2.0;
+  const rho = 1000;
+  const g = 9.81;
+  const freeSurfaceY = 5.2;
+  const centroidX = 5.0;
+
+  // World coordinate space
+  const worldXMin = 0, worldXMax = 10;
+  const worldYMin = 0, worldYMax = 6;
+
+  const W = canvas.width;
+  const H = canvas.height;
+
+  function toPx(x, y) {
+    const px = ((x - worldXMin) / (worldXMax - worldXMin)) * W;
+    const py = H - ((y - worldYMin) / (worldYMax - worldYMin)) * H;
+    return [px, py];
+  }
+
+  function toPxLen(len) {
+    return (len / (worldXMax - worldXMin)) * W;
+  }
+
+  function drawArrow(ctx, fromX, fromY, toX, toY, color) {
+    const [fx, fy] = toPx(fromX, fromY);
+    const [tx, ty] = toPx(toX, toY);
+    const headLen = 9;
+    const angle = Math.atan2(ty - fy, tx - fx);
+
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 1.6;
+
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.lineTo(tx, ty);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(tx - headLen * Math.cos(angle - Math.PI / 6), ty - headLen * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(tx - headLen * Math.cos(angle + Math.PI / 6), ty - headLen * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Clip a rectangle (the cube) to the water region (y in [0, freeSurfaceY])
+  // Returns { area, centroidY } of the submerged portion.
+  function submergedRect(yBottom, yTop) {
+    const top = Math.min(yTop, freeSurfaceY);
+    const bottom = yBottom;
+    if (top <= bottom) return { area: 0 };
+    const height = top - bottom;
+    const area = height * cubeSide;
+    return { area, yMid: (top + bottom) / 2 };
+  }
+
+  function render(centroidDepth) {
+    const centroidY = freeSurfaceY - centroidDepth;
+    const half = cubeSide / 2;
+
+    const yBottom = centroidY - half;
+    const yTop = centroidY + half;
+    const xLeft = centroidX - half;
+    const xRight = centroidX + half;
+
+    const sub = submergedRect(yBottom, yTop);
+    const submergedArea = sub.area || 0;
+    const buoyancy = rho * g * submergedArea;
+
+    // ---- Clear ----
+    ctx.clearRect(0, 0, W, H);
+
+    // ---- Water ----
+    const [wx0, wy0] = toPx(worldXMin, worldYMin);
+    const [wx1, wy1] = toPx(worldXMax, freeSurfaceY);
+    ctx.fillStyle = "#cfe8f7";
+    ctx.fillRect(wx0, wy1, wx1 - wx0, wy0 - wy1);
+
+    // Water line
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    const [lx0, ly0] = toPx(worldXMin, freeSurfaceY);
+    const [lx1, ly1] = toPx(worldXMax, freeSurfaceY);
+    ctx.moveTo(lx0, ly0);
+    ctx.lineTo(lx1, ly1);
+    ctx.stroke();
+
+    ctx.fillStyle = "#000";
+    ctx.font = "16px -apple-system, sans-serif";
+    ctx.textAlign = "right";
+    const [wlx, wly] = toPx(7.5, freeSurfaceY + 0.2);
+    ctx.fillText("Water Line", wlx, wly);
+
+    // ---- Cube ----
+    const cubePts = [
+      [xLeft, yBottom],
+      [xRight, yBottom],
+      [xRight, yTop],
+      [xLeft, yTop]
+    ].map(([x, y]) => toPx(x, y));
+
+    ctx.beginPath();
+    ctx.moveTo(cubePts[0][0], cubePts[0][1]);
+    for (let i = 1; i < cubePts.length; i++) ctx.lineTo(cubePts[i][0], cubePts[i][1]);
+    ctx.closePath();
+    ctx.fillStyle = "#f6c1b2";
+    ctx.fill();
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // ---- Pressure arrows ----
+    const arrowColor = "#18a558";
+    const numArrows = 10;
+    const pressureToLength = 1.5e-5;
+
+    function drawSideArrows(p1, p2, normal) {
+      for (let t = 0; t <= 1; t += 1 / (numArrows - 1)) {
+        const px = p1[0] + t * (p2[0] - p1[0]);
+        const py = p1[1] + t * (p2[1] - p1[1]);
+        const depth = freeSurfaceY - py;
+        if (depth <= 0) continue;
+        const L = rho * g * depth * pressureToLength;
+        const tailX = px + normal[0] * L;
+        const tailY = py + normal[1] * L;
+        drawArrow(ctx, tailX, tailY, px, py, arrowColor);
+      }
+    }
+
+    const sides = [
+      [[xLeft, yBottom], [xRight, yBottom], [0, -1]],   // bottom
+      [[xRight, yBottom], [xRight, yTop], [1, 0]],       // right
+      [[xRight, yTop], [xLeft, yTop], [0, 1]],           // top
+      [[xLeft, yTop], [xLeft, yBottom], [-1, 0]]         // left
+    ];
+    sides.forEach(([p1, p2, n]) => drawSideArrows(p1, p2, n));
+
+    // ---- Centroid marker (CG) ----
+    const [cgx, cgy] = toPx(centroidX, centroidY);
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cgx - 7, cgy);
+    ctx.lineTo(cgx + 7, cgy);
+    ctx.moveTo(cgx, cgy - 7);
+    ctx.lineTo(cgx, cgy + 7);
+    ctx.stroke();
+
+    ctx.font = "13px -apple-system, sans-serif";
+    ctx.fillStyle = "#000";
+    ctx.textAlign = "left";
+    ctx.fillText("+ CG", cgx + 10, cgy - 10);
+
+    // ---- Info box ----
+    const infoLines = [
+      `Centroid depth = ${centroidDepth.toFixed(2)} m`,
+      `Submerged area = ${submergedArea.toFixed(2)} m²`,
+      `Buoyancy = ${(buoyancy / 1000).toFixed(2)} kN`
+    ];
+    const boxX = 14, boxY = 14;
+    ctx.font = "14px -apple-system, sans-serif";
+    const boxW = 240, boxH = 78;
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.fillRect(boxX, boxY, boxW, boxH);
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+    ctx.fillStyle = "#111";
+    infoLines.forEach((line, i) => {
+      ctx.fillText(line, boxX + 12, boxY + 24 + i * 20);
+    });
+  }
+
+  function update() {
+    const depth = parseFloat(slider.value);
+    depthLabel.textContent = depth.toFixed(2) + " m";
+    render(depth);
+  }
+
+  slider.addEventListener("input", update);
+  update();
+})();
+</script>
+
