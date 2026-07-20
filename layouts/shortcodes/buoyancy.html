@@ -1,4 +1,3 @@
-
 <style>
   #wrap {
     display: flex;
@@ -175,7 +174,9 @@
     const pressureToLength = 1.5e-5;
 
     function drawSideArrows(p1, p2, normal) {
-      for (let t = 0; t <= 1; t += 1 / (numArrows - 1)) {
+      const tails = [];
+      for (let i = 0; i < numArrows; i++) {
+        const t = i / (numArrows - 1);
         const px = p1[0] + t * (p2[0] - p1[0]);
         const py = p1[1] + t * (p2[1] - p1[1]);
         const depth = freeSurfaceY - py;
@@ -183,7 +184,20 @@
         const L = rho * g * depth * pressureToLength;
         const tailX = px + normal[0] * L;
         const tailY = py + normal[1] * L;
+        tails.push([tailX, tailY]);
         drawArrow(ctx, tailX, tailY, px, py, arrowColor);
+      }
+      // Connect the arrow tails with a line, tracing the pressure profile
+      if (tails.length > 1) {
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        tails.forEach(([tx, ty], i) => {
+          const [px, py] = toPx(tx, ty);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        });
+        ctx.stroke();
       }
     }
 
@@ -206,10 +220,21 @@
     ctx.lineTo(cgx, cgy + 7);
     ctx.stroke();
 
-    ctx.font = "13px -apple-system, sans-serif";
+    // ---- Legend (matches matplotlib's upper-right legend box) ----
+    const legX = W - 160, legY = 14, legW = 146, legH = 34;
+    ctx.fillStyle = "rgba(255,255,255,0.0)";
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(legX + 14, legY + legH / 2);
+    ctx.lineTo(legX + 28, legY + legH / 2);
+    ctx.moveTo(legX + 21, legY + legH / 2 - 7);
+    ctx.lineTo(legX + 21, legY + legH / 2 + 7);
+    ctx.stroke();
+    ctx.font = "14px -apple-system, sans-serif";
     ctx.fillStyle = "#000";
     ctx.textAlign = "left";
-    ctx.fillText("+ CG", cgx + 10, cgy - 10);
+    ctx.fillText("CG", legX + 36, legY + legH / 2 + 5);
 
     // ---- Info box ----
     const infoLines = [
