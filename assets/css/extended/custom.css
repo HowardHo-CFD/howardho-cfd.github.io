@@ -1,0 +1,6 @@
+/* Targets the profile layout's author image */
+
+img.medium-zoom-image {
+  height: 500px !important;
+  width: 500px !important;
+}
