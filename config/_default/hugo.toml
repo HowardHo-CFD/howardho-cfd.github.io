@@ -1,4 +1,5 @@
-baseURL = "https://HowardHo-CFD.github.io/"
+#baseURL = "https://HowardHo-CFD.github.io/"
+baseURL = "https://HowardHo-CFD.github.io/academic_website/"
 languageCode = "en-us"
 defaultContentLanguage = "en"
 title = "Dr. Howard Haonan Ho"
@@ -8,6 +9,7 @@ theme = "blowfish"
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+
 
 [about]
   layout = "page"

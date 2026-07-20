@@ -16,6 +16,7 @@ Course materials for Fluid Mechanics.
 
 - [Buoyancy Simulator](/teaching/fluids/interactive-tools/buoyancy/)
 
+
 ## Supplementary Materials
 
 - [Course Syllabus](/files/fluids/syllabus.pdf)
