@@ -4,7 +4,7 @@ layout: "simple"
 showDate: false
 showReadingTime: false
 showWordCount: false
-_build:
+build:
   list: never
 ---
 
