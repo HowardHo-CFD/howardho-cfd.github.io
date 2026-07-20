@@ -16,7 +16,7 @@ mainSections = ["posts"]
   showScrollToTop = true
 
 [homepage]
-  layout = "page"
+  layout = "profile"
   showRecent = false
 
 [article]
