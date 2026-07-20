@@ -8,8 +8,9 @@ theme = "blowfish"
   isoCode = "en"
   displayName = "English"
 
-[homepage]
-  layout = "page"
+[params.homepage]
+  layout = "page"  # or keep as is
+  showRecent = false
 
 [markup]
   [markup.goldmark]
