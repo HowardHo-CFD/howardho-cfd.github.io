@@ -7,6 +7,14 @@ showWordCount: false
 ---
 
 <div style="text-align: center; margin-bottom: 1.5rem;">
+  <img src="/img/my-teaching.jpg" alt="Howard Ho Teaching" style="width: 850px !important; max-width: 100% !important; height: auto; border-radius: 8px; margin: 0 auto; display: block;">
+</div>
+
+<div style="text-align: justify;">
+
+{{< figure src="/img/my-teaching.jpg" width="500" alt="Howard Ho Teaching" class="mx-auto rounded-lg max-w-full h-auto mb-6" >}}
+
+<div style="text-align: center; margin-bottom: 1.5rem;">
   <img src="/img/my-teaching.jpg" alt="Howard Ho" style="width: 850px; max-width: 100%; height: auto; border-radius: 8px; margin: 0 auto; display: block;">
 </div>
 
