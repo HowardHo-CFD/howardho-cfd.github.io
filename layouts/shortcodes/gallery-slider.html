@@ -127,7 +127,6 @@
         {{ $src = . }}
       {{ end }}
 
-      #{{ $url := $src | relURL }}
       {{ $cleanSrc := strings.TrimPrefix "/" $src }}
       {{ $url := $cleanSrc | relURL }}
 

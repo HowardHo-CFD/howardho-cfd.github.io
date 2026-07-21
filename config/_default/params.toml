@@ -1,4 +1,4 @@
-colorScheme = "ocean"
+colorScheme = "noir" #"congo"
 enableSearch = true
 enableCodeCopy = true
 defaultAppearance = "dark" # Options: "light", "dark", "system"
@@ -16,8 +16,8 @@ mainSections = ["posts"]
   showScrollToTop = true
 
 [homepage]
-  layout =  "profile" # valid options: page, profile, hero, card, background, custom
-  homepageImage = "img/cover.png" # used in: hero, and card
+  layout =  "background" # valid options: page, profile, hero, card, background, custom
+  homepageImage = "img/cover_2.png" # used in: hero, and card
   showRecent = true
   showRecentItems = 3
   showMoreLink = true

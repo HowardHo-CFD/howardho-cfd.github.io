@@ -4,14 +4,9 @@ pageRef = "/"
 weight = 1
 
 [[main]]
-name = "Biography"
+name = "Biography & CV"
 pageRef = "about"
 weight = 10
-
-[[main]]
-name = "CV"
-pageRef = "cv"
-weight = 15
 
 [[main]]
 name = "Publications"
@@ -41,7 +36,7 @@ weight = 40
   weight = 3
 
 [[main]]
-name = "Gallery"
+name = "CFD Gallery"
 pageRef = "gallery"
 weight = 50
 

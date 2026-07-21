@@ -5,16 +5,19 @@ defaultContentLanguage = "en"
 title = "Dr. Howard Haonan Ho"
 theme = "blowfish"
 
+[about]
+  layout = "page"
+
+# Tell KaTeX engine to accept single $ for inline math
+[katex]
+  delimiters = [
+    { left = "$$", right = "$$", display = true },
+    { left = "$", right = "$", display = false },
+    { left = "\\(", right = "\\)", display = false },
+    { left = "\\[", right = "\\]", display = true }
+  ]
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
-      unsafe = true
-    [markup.goldmark.extensions]
-      [markup.goldmark.extensions.passthrough]
-        enable = true
-        [markup.goldmark.extensions.passthrough.delimiters]
-          inline = [['$', '$'], ['\\(', '\\)']]
-          block = [['$$', '$$'], ['\\[', '\\]']]
-
-[about]
-  layout = "page"
+      unsafe = true  # Allows custom inline CSS / spans in Markdown

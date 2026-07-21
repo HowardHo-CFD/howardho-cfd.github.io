@@ -3,13 +3,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 8px 18px 8px;
+    padding: 20px;
     box-sizing: border-box;
+    background-color: #ffffff;
+    color: #111111;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin: 1.5rem 0;
   }
-  canvas {
-    max-width: 100%;
+  #wrap canvas {
+    max-width: 90%;
     height: auto;
     border-radius: 8px;
+    background-color: #ffffff;
   }
   #controls {
     width: 100%;
@@ -20,8 +26,9 @@
     gap: 12px;
   }
   #controls label {
-    font-size: 14px;
-    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
     white-space: nowrap;
   }
   #depthSlider {
@@ -29,14 +36,13 @@
   }
   #depthValue {
     font-variant-numeric: tabular-nums;
-    font-size: 14px;
-    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
     min-width: 70px;
     text-align: right;
   }
 </style>
-</head>
-<body>
 
 <div id="wrap">
   <canvas id="canvas" width="1000" height="600"></canvas>
@@ -74,19 +80,14 @@
     return [px, py];
   }
 
-  function toPxLen(len) {
-    return (len / (worldXMax - worldXMin)) * W;
-  }
-
-  function drawArrow(ctx, fromX, fromY, toX, toY, color) {
+  function drawArrow(ctx, fromX, fromY, toX, toY, color, lineWidth = 1.6, headLen = 9) {
     const [fx, fy] = toPx(fromX, fromY);
     const [tx, ty] = toPx(toX, toY);
-    const headLen = 9;
     const angle = Math.atan2(ty - fy, tx - fx);
 
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
-    ctx.lineWidth = 1.6;
+    ctx.lineWidth = lineWidth;
 
     ctx.beginPath();
     ctx.moveTo(fx, fy);
@@ -102,11 +103,11 @@
   }
 
   // Clip a rectangle (the cube) to the water region (y in [0, freeSurfaceY])
-  // Returns { area, centroidY } of the submerged portion.
+  // Returns { area, yMid } of the submerged portion.
   function submergedRect(yBottom, yTop) {
     const top = Math.min(yTop, freeSurfaceY);
     const bottom = yBottom;
-    if (top <= bottom) return { area: 0 };
+    if (top <= bottom) return { area: 0, yMid: null };
     const height = top - bottom;
     const area = height * cubeSide;
     return { area, yMid: (top + bottom) / 2 };
@@ -123,10 +124,12 @@
 
     const sub = submergedRect(yBottom, yTop);
     const submergedArea = sub.area || 0;
-    const buoyancy = rho * g * submergedArea;
+    const cbY = sub.yMid; // Center of Buoyancy Y coordinate in world space
+    const buoyancy = rho * g * submergedArea; // Buoyancy force in Newtons
 
-    // ---- Clear ----
-    ctx.clearRect(0, 0, W, H);
+    // ---- Clear with Solid White ----
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, W, H);
 
     // ---- Water ----
     const [wx0, wy0] = toPx(worldXMin, worldYMin);
@@ -135,7 +138,7 @@
     ctx.fillRect(wx0, wy1, wx1 - wx0, wy0 - wy1);
 
     // Water line
-    ctx.strokeStyle = "#000";
+    ctx.strokeStyle = "#000000";
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     const [lx0, ly0] = toPx(worldXMin, freeSurfaceY);
@@ -144,7 +147,7 @@
     ctx.lineTo(lx1, ly1);
     ctx.stroke();
 
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = "#000000";
     ctx.font = "16px -apple-system, sans-serif";
     ctx.textAlign = "right";
     const [wlx, wly] = toPx(7.5, freeSurfaceY + 0.2);
@@ -164,7 +167,7 @@
     ctx.closePath();
     ctx.fillStyle = "#f6c1b2";
     ctx.fill();
-    ctx.strokeStyle = "#000";
+    ctx.strokeStyle = "#000000";
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
@@ -187,9 +190,8 @@
         tails.push([tailX, tailY]);
         drawArrow(ctx, tailX, tailY, px, py, arrowColor);
       }
-      // Connect the arrow tails with a line, tracing the pressure profile
       if (tails.length > 1) {
-        ctx.strokeStyle = "#000";
+        ctx.strokeStyle = "#000000";
         ctx.lineWidth = 1;
         ctx.beginPath();
         tails.forEach(([tx, ty], i) => {
@@ -202,16 +204,16 @@
     }
 
     const sides = [
-      [[xLeft, yBottom], [xRight, yBottom], [0, -1]],   // bottom
-      [[xRight, yBottom], [xRight, yTop], [1, 0]],       // right
-      [[xRight, yTop], [xLeft, yTop], [0, 1]],           // top
-      [[xLeft, yTop], [xLeft, yBottom], [-1, 0]]         // left
+      [[xLeft, yBottom], [xRight, yBottom], [0, -1]],
+      [[xRight, yBottom], [xRight, yTop], [1, 0]],
+      [[xRight, yTop], [xLeft, yTop], [0, 1]],
+      [[xLeft, yTop], [xLeft, yBottom], [-1, 0]]
     ];
     sides.forEach(([p1, p2, n]) => drawSideArrows(p1, p2, n));
 
-    // ---- Centroid marker (CG) ----
+    // ---- Centroid marker (CG - Black) ----
     const [cgx, cgy] = toPx(centroidX, centroidY);
-    ctx.strokeStyle = "#000";
+    ctx.strokeStyle = "#000000";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(cgx - 7, cgy);
@@ -220,40 +222,91 @@
     ctx.lineTo(cgx, cgy + 7);
     ctx.stroke();
 
-    // ---- Legend (matches matplotlib's upper-right legend box) ----
-    const legX = W - 160, legY = 14, legW = 146, legH = 34;
-    ctx.fillStyle = "rgba(255,255,255,0.0)";
-    ctx.strokeStyle = "#000";
+    // ---- Center of Buoyancy marker & Upward Force Vector (F_B) ----
+    if (cbY !== null && buoyancy > 0) {
+      // 1. Draw C_B marker
+      const [cbx, cby] = toPx(centroidX, cbY);
+      ctx.strokeStyle = "#184fd6";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(cbx - 7, cby);
+      ctx.lineTo(cbx + 7, cby);
+      ctx.moveTo(cbx, cby - 7);
+      ctx.lineTo(cbx, cby + 7);
+      ctx.stroke();
+
+      // 2. Scale force vector upward (buoyancyToWorldLen converts Newtons to world length)
+      const forceScale = 2.0e-5; 
+      const vectorLenWorld = buoyancy * forceScale;
+      const forceTopY = cbY + vectorLenWorld;
+
+      // 3. Draw upward force arrow (Blue)
+      drawArrow(ctx, centroidX, cbY, centroidX, forceTopY, "#184fd6", 3.0, 11);
+
+      // 4. Annotate with F_B
+      const [ftx, fty] = toPx(centroidX, forceTopY + 0.05);
+      ctx.font = "bold 16px -apple-system, sans-serif";
+      ctx.fillStyle = "#184fd6";
+      ctx.textAlign = "center";
+      ctx.fillText("F_B", ftx, fty);
+    }
+
+    // ---- Legend ----
+    const legX = W - 180, legY = 14, legW = 166, legH = 58;
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    ctx.fillRect(legX, legY, legW, legH);
+    ctx.strokeStyle = "#ccc";
     ctx.lineWidth = 1;
+    ctx.strokeRect(legX, legY, legW, legH);
+
+    // Legend CG
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(legX + 14, legY + legH / 2);
-    ctx.lineTo(legX + 28, legY + legH / 2);
-    ctx.moveTo(legX + 21, legY + legH / 2 - 7);
-    ctx.lineTo(legX + 21, legY + legH / 2 + 7);
+    ctx.moveTo(legX + 14, legY + 16);
+    ctx.lineTo(legX + 28, legY + 16);
+    ctx.moveTo(legX + 21, legY + 9);
+    ctx.lineTo(legX + 21, legY + 23);
     ctx.stroke();
+
     ctx.font = "14px -apple-system, sans-serif";
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = "#000000";
     ctx.textAlign = "left";
-    ctx.fillText("CG", legX + 36, legY + legH / 2 + 5);
+    ctx.fillText("CG (Gravity)", legX + 36, legY + 21);
+
+    // Legend F_B
+    ctx.strokeStyle = "#184fd6";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(legX + 14, legY + 42); // Horizontal line
+    ctx.lineTo(legX + 28, legY + 42);
+    ctx.moveTo(legX + 21, legY + 35); // Vertical line
+    ctx.lineTo(legX + 21, legY + 49);
+    ctx.stroke();
+
+    ctx.fillStyle = "#184fd6";
+    ctx.fillText("CB (Buoyancy)", legX + 36, legY + 47);
 
     // ---- Info box ----
+    const cbReadout = cbY !== null ? `${(cbY - yBottom).toFixed(2)} m` : "N/A";
     const infoLines = [
       `Centroid depth = ${centroidDepth.toFixed(2)} m`,
       `Submerged area = ${submergedArea.toFixed(2)} m²`,
-      `Buoyancy = ${(buoyancy / 1000).toFixed(2)} kN`
+      `Buoyancy F_B = ${(buoyancy / 1000).toFixed(2)} kN`,
+      `C_B height = ${cbReadout}`
     ];
     const boxX = 14, boxY = 14;
     ctx.font = "14px -apple-system, sans-serif";
-    const boxW = 240, boxH = 78;
-    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    const boxW = 240, boxH = 98;
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
     ctx.fillRect(boxX, boxY, boxW, boxH);
     ctx.strokeStyle = "#ccc";
     ctx.lineWidth = 1;
     ctx.strokeRect(boxX, boxY, boxW, boxH);
 
-    ctx.fillStyle = "#111";
+    ctx.fillStyle = "#111111";
     infoLines.forEach((line, i) => {
-      ctx.fillText(line, boxX + 12, boxY + 24 + i * 20);
+      ctx.fillText(line, boxX + 12, boxY + 22 + i * 20);
     });
   }
 
@@ -267,4 +320,3 @@
   update();
 })();
 </script>
-

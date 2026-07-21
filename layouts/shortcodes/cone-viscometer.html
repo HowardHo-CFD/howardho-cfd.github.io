@@ -3,13 +3,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 8px 18px 8px;
+    padding: 20px;
     box-sizing: border-box;
+    background-color: #ffffff;
+    color: #111111;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin: 1.5rem 0;
   }
   #visc-wrap canvas {
     max-width: 100%;
     height: auto;
     border-radius: 8px;
+    background-color: #ffffff;
   }
   #visc-panels-top {
     display: flex;
@@ -35,8 +41,9 @@
     gap: 12px;
   }
   .visc-controls label {
-    font-size: 14px;
-    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
     white-space: nowrap;
     width: 90px;
   }
@@ -45,15 +52,17 @@
   }
   .visc-controls .visc-val {
     font-variant-numeric: tabular-nums;
-    font-size: 14px;
-    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
     min-width: 70px;
     text-align: right;
   }
   .visc-section-label {
-    font-size: 14px;
-    color: #666;
-    margin: 18px 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #444444;
+    margin: 18px 0 8px 0;
     text-align: center;
   }
 </style>
@@ -76,7 +85,7 @@
     <canvas id="visc-gapView" width="620" height="520"></canvas>
   </div>
   <div class="visc-controls">
-    <label for="visc-rSlider">Radius r</label>
+    <label for="visc-rSlider">Radius r/R</label>
     <input type="range" id="visc-rSlider" min="0.05" max="1.0" step="0.05" value="0.5">
     <span id="visc-rValue" class="visc-val">0.50</span>
   </div>
@@ -84,6 +93,15 @@
 </div>
 
 <script>
+// ============================================================
+// CHANGE ALL FONT SIZES HERE FOR CANVAS TEXT:
+// ============================================================
+const FONTS = {
+  label: "16px -apple-system, sans-serif",  /* "Rotating cone", "Stationary plate" */
+  body: "16px -apple-system, sans-serif",         /* Box readouts & info text */
+  axis: "16px -apple-system, sans-serif",   /* Axis titles like "Height", "Velocity" */
+};
+
 (function () {
   const R = 1.0;
   const Omega = -Math.PI / 2;
@@ -157,7 +175,8 @@
       rMin = Math.min(rMin, R);
 
       // ---- TOP VIEW ----
-      topCtx.clearRect(0, 0, topW, topH);
+      topCtx.fillStyle = "#ffffff";
+      topCtx.fillRect(0, 0, topW, topH);
 
       let [cx, cy] = topToPx(0, 0);
       topCtx.beginPath();
@@ -204,20 +223,21 @@
       });
       topCtx.stroke();
 
-      topCtx.font = "13px -apple-system, sans-serif";
+      topCtx.font = FONTS.body;
       topCtx.fillStyle = "#000";
       topCtx.textAlign = "left";
-      const boxW = 190, boxH = 44;
-      topCtx.fillStyle = "rgba(255,255,255,0.85)";
+      const boxW = 230, boxH = 54;
+      topCtx.fillStyle = "rgba(255,255,255,0.9)";
       topCtx.fillRect(8, 8, boxW, boxH);
       topCtx.strokeStyle = "#ccc";
       topCtx.strokeRect(8, 8, boxW, boxH);
       topCtx.fillStyle = "#000";
-      topCtx.fillText(`z/h_max = ${altitudeFrac.toFixed(2)}`, 16, 26);
-      topCtx.fillText(`v_θ = ${v.toFixed(2)} (same for all r)`, 16, 44);
+      topCtx.fillText(`z/h_max = ${altitudeFrac.toFixed(2)}`, 16, 30);
+      topCtx.fillText(`v_θ = ${v.toFixed(2)} (same for all r)`, 16, 50);
 
       // ---- SIDE VIEW ----
-      sideCtx.clearRect(0, 0, sideCanvas.width, sideCanvas.height);
+      sideCtx.fillStyle = "#ffffff";
+      sideCtx.fillRect(0, 0, sideCanvas.width, sideCanvas.height);
       const sideToPx = makeSideTransform(hMax);
 
       sideCtx.strokeStyle = "#000";
@@ -227,11 +247,12 @@
       sideCtx.moveTo(p1[0], p1[1]);
       sideCtx.lineTo(p2[0], p2[1]);
       sideCtx.stroke();
-      sideCtx.font = "12px -apple-system, sans-serif";
+      
+      sideCtx.font = FONTS.label;
       sideCtx.fillStyle = "#000";
       sideCtx.textAlign = "center";
       let [tx, ty] = sideToPx(0, -0.12 * hMax);
-      sideCtx.fillText("Stationary plate", tx, ty);
+      sideCtx.fillText("Stationary plate", tx*1.5, ty);
 
       sideCtx.beginPath();
       [p1, p2] = [sideToPx(-1, hMax), sideToPx(1, hMax)];
@@ -239,7 +260,7 @@
       sideCtx.lineTo(p2[0], p2[1]);
       sideCtx.stroke();
       [tx, ty] = sideToPx(0, hMax * 1.08);
-      sideCtx.fillText("Rotating cone", tx, ty);
+      sideCtx.fillText("Rotating cone", tx*1.5, ty);
 
       sideCtx.strokeStyle = "#000";
       sideCtx.lineWidth = 2;
@@ -260,16 +281,18 @@
       sideCtx.moveTo(p1[0], p1[1]);
       sideCtx.lineTo(p2[0], p2[1]);
       sideCtx.stroke();
+      
+      sideCtx.font = FONTS.body;
       sideCtx.fillStyle = "#e00";
       [tx, ty] = sideToPx(0, z + 0.03 * hMax);
       sideCtx.fillText(`z/h = ${altitudeFrac.toFixed(2)}`, tx, ty);
 
+      sideCtx.font = FONTS.axis;
       sideCtx.fillStyle = "#000";
-      sideCtx.font = "13px -apple-system, sans-serif";
       sideCtx.textAlign = "center";
       sideCtx.fillText("Velocity", sideCanvas.width / 2, sideCanvas.height - 8);
       sideCtx.save();
-      sideCtx.translate(14, sideCanvas.height / 2);
+      sideCtx.translate(16, sideCanvas.height / 2);
       sideCtx.rotate(-Math.PI / 2);
       sideCtx.fillText("Height", 0, 0);
       sideCtx.restore();
@@ -341,7 +364,9 @@
       const rSample = Math.min(Math.max(rSampleRaw, 1e-6), R);
       const hLocal = rSample * Math.tan(alpha);
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // ---- GAP VIEW ----
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.strokeStyle = "#000";
       ctx.lineWidth = 3;
@@ -377,12 +402,11 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
+      ctx.font = FONTS.body;
       ctx.fillStyle = "#e00";
-      ctx.font = "13px -apple-system, sans-serif";
       ctx.textAlign = "center";
-      // Nudged further below the plate line so the label doesn't sit on top of it
       const [rlx, rly] = toPx(rSample, -0.18 * R * Math.tan(alpha));
-      ctx.fillText(`r = ${rSample.toFixed(2)}`, rlx, rly);
+      ctx.fillText(`r/R = ${rSample.toFixed(2)}`, rlx, rly);
 
       if (hLocal > 0) {
         const numArrows = 8;
@@ -412,19 +436,20 @@
         `Local gap = ${hLocal.toFixed(3)}`,
         `v_top = ${vTop.toFixed(2)}`
       ];
-      const boxX = 12, boxY = 12, boxW = 200, boxH = 18 + infoLines.length * 18;
-      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      const boxX = 12, boxY = 12, boxW = 220, boxH = 18 + infoLines.length * 22;
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
       ctx.fillRect(boxX, boxY, boxW, boxH);
       ctx.strokeStyle = "#ccc";
       ctx.lineWidth = 1;
       ctx.strokeRect(boxX, boxY, boxW, boxH);
+      
+      ctx.font = FONTS.body;
       ctx.fillStyle = "#111";
-      ctx.font = "13px -apple-system, sans-serif";
       ctx.textAlign = "left";
-      infoLines.forEach((line, i) => ctx.fillText(line, boxX + 10, boxY + 20 + i * 18));
+      infoLines.forEach((line, i) => ctx.fillText(line, boxX + 10, boxY + 22 + i * 22));
 
+      ctx.font = FONTS.axis;
       ctx.fillStyle = "#000";
-      ctx.font = "13px -apple-system, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText("Radius + visualised v_θ", canvas.width / 2, canvas.height - 10);
       ctx.save();
