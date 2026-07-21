@@ -1,0 +1,374 @@
+<style>
+  #wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px 18px 8px;
+    box-sizing: border-box;
+  }
+  canvas {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  #controls {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .control-row label {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    width: 90px;
+  }
+  .control-row input[type="range"] {
+    flex: 1;
+  }
+  .control-row .val {
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    color: #333;
+    min-width: 70px;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<div id="wrap">
+  <canvas id="canvas" width="1000" height="600"></canvas>
+  <div id="controls">
+    <div class="control-row">
+      <label for="depthSlider">Depth (m)</label>
+      <input type="range" id="depthSlider" min="0.25" max="5.0" step="0.05" value="2.5">
+      <span id="depthValue" class="val">2.50 m</span>
+    </div>
+    <div class="control-row">
+      <label for="angleSlider">Angle (°)</label>
+      <input type="range" id="angleSlider" min="5" max="90" step="1" value="75">
+      <span id="angleValue" class="val">75°</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const depthSlider = document.getElementById("depthSlider");
+  const angleSlider = document.getElementById("angleSlider");
+  const depthLabel = document.getElementById("depthValue");
+  const angleLabel = document.getElementById("angleValue");
+
+  // ---- Constants (mirrors the original Python model) ----
+  const plateLength = 4.0;
+  const plateWidth = 1.0;
+  const rho = 1000;
+  const g = 9.81;
+  const freeSurfaceY = 5.2;
+  const scale = 1.0;
+  const centroidX = 5.0;
+
+  // World coordinate space
+  const worldXMin = 0, worldXMax = 10;
+  const worldYMin = 0, worldYMax = 6;
+
+  const W = canvas.width;
+  const H = canvas.height;
+
+  function toPx(x, y) {
+    const px = ((x - worldXMin) / (worldXMax - worldXMin)) * W;
+    const py = H - ((y - worldYMin) / (worldYMax - worldYMin)) * H;
+    return [px, py];
+  }
+
+  function toPxLen(len) {
+    return (len / (worldXMax - worldXMin)) * W;
+  }
+
+  function drawArrow(ctx, fromX, fromY, toX, toY, color, width) {
+    const [fx, fy] = toPx(fromX, fromY);
+    const [tx, ty] = toPx(toX, toY);
+    const headLen = width > 2 ? 16 : 9;
+    const angle = Math.atan2(ty - fy, tx - fx);
+
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = width;
+
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.lineTo(tx, ty);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(tx - headLen * Math.cos(angle - Math.PI / 6), ty - headLen * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(tx - headLen * Math.cos(angle + Math.PI / 6), ty - headLen * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawCross(x, y, color, size) {
+    const [px, py] = toPx(x, y);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(px - size, py);
+    ctx.lineTo(px + size, py);
+    ctx.moveTo(px, py - size);
+    ctx.lineTo(px, py + size);
+    ctx.stroke();
+  }
+
+  function render(centroidDepth, plateAngleDeg) {
+    // ---- Hydrostatic calculations ----
+    const P_average = rho * g * centroidDepth;
+    const A = plateLength * plateWidth;
+    const F = P_average * A;
+    const I_G = (plateWidth * Math.pow(plateLength, 3)) / 12;
+    const thetaRad = (plateAngleDeg * Math.PI) / 180;
+
+    const h_CP = centroidDepth + (I_G * Math.pow(Math.sin(thetaRad), 2)) / (A * centroidDepth);
+    const y_CP = (h_CP - centroidDepth) / Math.sin(thetaRad);
+
+    // ---- Geometry ----
+    const centroidY = freeSurfaceY - centroidDepth * scale;
+    const centroid = [centroidX, centroidY];
+
+    const direction = [Math.cos(thetaRad), Math.sin(thetaRad)];
+    const normal = [-direction[1], direction[0]];
+
+    const drawingLength = plateLength * scale;
+    const start = [centroid[0] - direction[0] * drawingLength / 2, centroid[1] - direction[1] * drawingLength / 2];
+    const end = [centroid[0] + direction[0] * drawingLength / 2, centroid[1] + direction[1] * drawingLength / 2];
+
+    const plateHalfThickness = 0.08;
+
+    // ---- Clear ----
+    ctx.clearRect(0, 0, W, H);
+
+    // ---- Water ----
+    const [wx0, wy0] = toPx(worldXMin, worldYMin);
+    const [wx1, wy1] = toPx(worldXMax, freeSurfaceY);
+    ctx.fillStyle = "#cfe8f7";
+    ctx.fillRect(wx0, wy1, wx1 - wx0, wy0 - wy1);
+
+    // Water line (white, matching original)
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const [lx0, ly0] = toPx(worldXMin, freeSurfaceY);
+    const [lx1, ly1] = toPx(worldXMax, freeSurfaceY);
+    ctx.moveTo(lx0, ly0);
+    ctx.lineTo(lx1, ly1);
+    ctx.stroke();
+
+    // ---- Plate ----
+    const plateCorners = [
+      [start[0] + normal[0] * plateHalfThickness, start[1] + normal[1] * plateHalfThickness],
+      [end[0] + normal[0] * plateHalfThickness, end[1] + normal[1] * plateHalfThickness],
+      [end[0] - normal[0] * plateHalfThickness, end[1] - normal[1] * plateHalfThickness],
+      [start[0] - normal[0] * plateHalfThickness, start[1] - normal[1] * plateHalfThickness]
+    ].map(([x, y]) => toPx(x, y));
+
+    ctx.beginPath();
+    ctx.moveTo(plateCorners[0][0], plateCorners[0][1]);
+    for (let i = 1; i < plateCorners.length; i++) ctx.lineTo(plateCorners[i][0], plateCorners[i][1]);
+    ctx.closePath();
+    ctx.fillStyle = "#f6c1b2";
+    ctx.fill();
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // ---- Hydrostatic pressure arrows along the plate ----
+    const numArrows = 21;
+    const arrowGap = 0.05;
+    const arrowColor = "#18a558";
+    const pressureToLength = 1.5e-5;
+
+    const tails = [];
+    for (let i = 0; i < numArrows; i++) {
+      const t = 0.02 + (i / (numArrows - 1)) * (0.98 - 0.02);
+      const p = [start[0] + t * (end[0] - start[0]), start[1] + t * (end[1] - start[1])];
+      const depth = Math.max(freeSurfaceY - p[1], 0);
+      const pressure = rho * g * depth;
+      const L = pressure * pressureToLength;
+      const tail = [p[0] + normal[0] * L, p[1] + normal[1] * L];
+      const head = [p[0] + normal[0] * arrowGap, p[1] + normal[1] * arrowGap];
+      tails.push(tail);
+      drawArrow(ctx, tail[0], tail[1], head[0], head[1], arrowColor, 1.6);
+    }
+
+    // Connect the tails (pressure profile outline)
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    tails.forEach(([tx, ty], i) => {
+      const [px, py] = toPx(tx, ty);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+
+    // ---- Centroid ----
+    drawCross(centroid[0], centroid[1], "#000", 8);
+
+    // ---- Centre of pressure ----
+    const cp = [centroid[0] - direction[0] * y_CP * scale, centroid[1] - direction[1] * y_CP * scale];
+    drawCross(cp[0], cp[1], "#d00000", 8);
+
+    // Dotted line centroid -> cp
+    ctx.strokeStyle = "#d00000";
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    const [ccx, ccy] = toPx(centroid[0], centroid[1]);
+    const [cpx, cpy] = toPx(cp[0], cp[1]);
+    ctx.moveTo(ccx, ccy);
+    ctx.lineTo(cpx, cpy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // y_CP label
+    const midCp = [(centroid[0] + cp[0]) / 2, (centroid[1] + cp[1]) / 2];
+    const labelOffset = [-normal[0] * 0.35, -normal[1] * 0.35];
+    const [lcx, lcy] = toPx(midCp[0] + labelOffset[0], midCp[1] + labelOffset[1]);
+    ctx.font = "13px -apple-system, sans-serif";
+    ctx.fillStyle = "#d00000";
+    ctx.textAlign = "center";
+    ctx.fillText(`y_CP = ${y_CP.toFixed(3)} m`, lcx, lcy);
+
+    // ---- Resultant hydrostatic force ----
+    const forceArrowLength = 1.8;
+    const forceTail = [cp[0] + normal[0] * forceArrowLength, cp[1] + normal[1] * forceArrowLength];
+    drawArrow(ctx, forceTail[0], forceTail[1], cp[0], cp[1], "#d00000", 3);
+
+    const forceLabelPos = [forceTail[0] + normal[0] * 0.35, forceTail[1] + normal[1] * 0.35];
+    const [flx, fly] = toPx(forceLabelPos[0], forceLabelPos[1]);
+    ctx.font = "bold 14px -apple-system, sans-serif";
+    ctx.fillStyle = "#d00000";
+    ctx.textAlign = "center";
+    ctx.fillText(`F = ${(F / 1000).toFixed(1)} kN`, flx, fly);
+
+    // ---- Depth indicator (vertical arrow from centroid up to the surface) ----
+    drawArrow(ctx, centroid[0], centroid[1], centroid[0], freeSurfaceY, "#000", 2);
+
+    const [hcx, hcy] = toPx(centroid[0] + 0.15, (freeSurfaceY + centroid[1]) / 2);
+    ctx.font = "13px -apple-system, sans-serif";
+    ctx.fillStyle = "#000";
+    ctx.textAlign = "left";
+    ctx.fillText(`h_c = ${centroidDepth.toFixed(2)} m`, hcx, hcy);
+
+    // ---- Theta annotation ----
+    const thetaRadius = 1.0;
+    ctx.strokeStyle = "#888";
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    const [refx1, refy1] = toPx(centroid[0], centroid[1]);
+    const [refx2, refy2] = toPx(centroid[0] + thetaRadius, centroid[1]);
+    ctx.moveTo(refx1, refy1);
+    ctx.lineTo(refx2, refy2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Arc traced manually in world space (0 to plateAngle degrees, counterclockwise from +x axis)
+    ctx.strokeStyle = "#888";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    const arcSteps = 40;
+    for (let i = 0; i <= arcSteps; i++) {
+      const a = (i / arcSteps) * thetaRad;
+      const ax = centroid[0] + thetaRadius * Math.cos(a);
+      const ay = centroid[1] + thetaRadius * Math.sin(a);
+      const [apx, apy] = toPx(ax, ay);
+      if (i === 0) ctx.moveTo(apx, apy);
+      else ctx.lineTo(apx, apy);
+    }
+    ctx.stroke();
+
+    const [thx, thy] = toPx(centroid[0] + thetaRadius * 1.45, centroid[1] + thetaRadius * 0.25);
+    ctx.font = "15px -apple-system, sans-serif";
+    ctx.fillStyle = "#888";
+    ctx.textAlign = "center";
+    ctx.fillText(`θ = ${plateAngleDeg.toFixed(0)}°`, thx, thy);
+
+    // ---- Legend (upper right) ----
+    const legX = W - 210, legY = 14, legRowH = 26;
+    ctx.font = "14px -apple-system, sans-serif";
+    ctx.textAlign = "left";
+
+    // Centroid entry
+    let ly = legY + legRowH / 2;
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(legX + 8, ly);
+    ctx.lineTo(legX + 22, ly);
+    ctx.moveTo(legX + 15, ly - 7);
+    ctx.lineTo(legX + 15, ly + 7);
+    ctx.stroke();
+    ctx.fillStyle = "#000";
+    ctx.fillText("Centroid", legX + 30, ly + 5);
+
+    // Centre of pressure entry
+    ly = legY + legRowH * 1.5;
+    ctx.strokeStyle = "#d00000";
+    ctx.beginPath();
+    ctx.moveTo(legX + 8, ly);
+    ctx.lineTo(legX + 22, ly);
+    ctx.moveTo(legX + 15, ly - 7);
+    ctx.lineTo(legX + 15, ly + 7);
+    ctx.stroke();
+    ctx.fillStyle = "#d00000";
+    ctx.fillText("Centre of pressure", legX + 30, ly + 5);
+
+    // ---- Info box ----
+    const infoLines = [
+      `Centroid depth = ${centroidDepth.toFixed(2)} m`,
+      `Plate angle = ${plateAngleDeg.toFixed(0)}°`,
+      `Average pressure = ${(P_average / 1000).toFixed(2)} kPa`,
+      `Resultant force = ${(F / 1000).toFixed(2)} kN`,
+      `Centre of pressure depth = ${h_CP.toFixed(2)} m`,
+      `y_CP = ${y_CP.toFixed(3)} m`
+    ];
+    const boxX = 14, boxY = 14;
+    ctx.font = "13px -apple-system, sans-serif";
+    const boxW = 230, boxH = 18 + infoLines.length * 18;
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.fillRect(boxX, boxY, boxW, boxH);
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+    ctx.fillStyle = "#111";
+    ctx.textAlign = "left";
+    infoLines.forEach((line, i) => {
+      ctx.fillText(line, boxX + 10, boxY + 20 + i * 18);
+    });
+  }
+
+  function update() {
+    const depth = parseFloat(depthSlider.value);
+    const angle = parseFloat(angleSlider.value);
+    depthLabel.textContent = depth.toFixed(2) + " m";
+    angleLabel.textContent = angle.toFixed(0) + "°";
+    render(depth, angle);
+  }
+
+  depthSlider.addEventListener("input", update);
+  angleSlider.addEventListener("input", update);
+  update();
+})();
+</script>

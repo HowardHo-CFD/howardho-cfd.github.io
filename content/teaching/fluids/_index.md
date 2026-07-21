@@ -11,6 +11,8 @@ Course materials for Fluid Mechanics.
 ## Interactive Tools
 
 - [Buoyancy Simulator](interactive-tools/buoyancy/)
+- [Hydrostatic Pressure Simulator](interactive-tools/hydrostatic-pressure/)
+- [Cone Viscometer Velocity Profile Simulator](interactive-tools/cone-viscometer/)
 
 ## Slides
 

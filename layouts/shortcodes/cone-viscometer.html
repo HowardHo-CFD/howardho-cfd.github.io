@@ -1,0 +1,447 @@
+<style>
+  #visc-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px 18px 8px;
+    box-sizing: border-box;
+  }
+  #visc-wrap canvas {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  #visc-panels-top {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+  }
+  #visc-panels-bottom {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+    margin-top: 20px;
+  }
+  .visc-controls {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .visc-controls label {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    width: 90px;
+  }
+  .visc-controls input[type="range"] {
+    flex: 1;
+  }
+  .visc-controls .visc-val {
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    color: #333;
+    min-width: 70px;
+    text-align: right;
+  }
+  .visc-section-label {
+    font-size: 14px;
+    color: #666;
+    margin: 18px 0 4px 0;
+    text-align: center;
+  }
+</style>
+
+<div id="visc-wrap">
+
+  <div class="visc-section-label">Velocity profile across the gap (cone angle = 2°)</div>
+  <div id="visc-panels-top">
+    <canvas id="visc-topView" width="440" height="440"></canvas>
+    <canvas id="visc-sideView" width="440" height="440"></canvas>
+  </div>
+  <div class="visc-controls">
+    <label for="visc-altSlider">z / h</label>
+    <input type="range" id="visc-altSlider" min="0.0" max="1.0" step="0.02" value="0.25">
+    <span id="visc-altValue" class="visc-val">0.25</span>
+  </div>
+
+  <div class="visc-section-label">Local velocity profile at a given radius (cone angle = 22°)</div>
+  <div id="visc-panels-bottom">
+    <canvas id="visc-gapView" width="620" height="520"></canvas>
+  </div>
+  <div class="visc-controls">
+    <label for="visc-rSlider">Radius r</label>
+    <input type="range" id="visc-rSlider" min="0.05" max="1.0" step="0.05" value="0.5">
+    <span id="visc-rValue" class="visc-val">0.50</span>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const R = 1.0;
+  const Omega = -Math.PI / 2;
+
+  // ============================================================
+  // PANEL 1 & 2: top view + side view (cone angle = 2 degrees)
+  // ============================================================
+  (function () {
+    const coneAngleDeg = 2.0;
+    const alpha = (coneAngleDeg * Math.PI) / 180;
+
+    const topCanvas = document.getElementById("visc-topView");
+    const topCtx = topCanvas.getContext("2d");
+    const sideCanvas = document.getElementById("visc-sideView");
+    const sideCtx = sideCanvas.getContext("2d");
+    const slider = document.getElementById("visc-altSlider");
+    const label = document.getElementById("visc-altValue");
+
+    const topW = topCanvas.width, topH = topCanvas.height;
+    const topPad = 20;
+    const topRangeMin = -R - 0.05, topRangeMax = R + 0.05;
+    const topScale = (Math.min(topW, topH) - 2 * topPad) / (topRangeMax - topRangeMin);
+
+    function topToPx(x, y) {
+      const px = topW / 2 + x * topScale;
+      const py = topH / 2 - y * topScale;
+      return [px, py];
+    }
+    function topLen(len) { return len * topScale; }
+
+    function makeSideTransform(hMax) {
+      const pad = 40;
+      const xMin = 0, xMax = 1.1;
+      const yMin = -0.1 * hMax, yMax = 1.2 * hMax;
+      const w = sideCanvas.width - 2 * pad;
+      const h = sideCanvas.height - 2 * pad;
+      return function (x, y) {
+        const px = pad + ((x - xMin) / (xMax - xMin)) * w;
+        const py = sideCanvas.height - pad - ((y - yMin) / (yMax - yMin)) * h;
+        return [px, py];
+      };
+    }
+
+    function drawArrow(ctx, toPxFn, fromX, fromY, toX, toY, color, width) {
+      const [fx, fy] = toPxFn(fromX, fromY);
+      const [tx, ty] = toPxFn(toX, toY);
+      const headLen = 8;
+      const angle = Math.atan2(ty - fy, tx - fx);
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(fx, fy);
+      ctx.lineTo(tx, ty);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(tx - headLen * Math.cos(angle - Math.PI / 6), ty - headLen * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(tx - headLen * Math.cos(angle + Math.PI / 6), ty - headLen * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function render(altitudeFrac) {
+      const hMax = R * Math.tan(alpha);
+      const z = altitudeFrac * hMax;
+      const v = (Omega / Math.tan(alpha)) * z;
+      const arrowLen = 0.4 * v;
+
+      let rMin = z > 0 ? z / Math.tan(alpha) : 0.0;
+      rMin = Math.min(rMin, R);
+
+      // ---- TOP VIEW ----
+      topCtx.clearRect(0, 0, topW, topH);
+
+      let [cx, cy] = topToPx(0, 0);
+      topCtx.beginPath();
+      topCtx.arc(cx, cy, topLen(R), 0, Math.PI * 2);
+      topCtx.fillStyle = "rgba(135,206,235,0.25)";
+      topCtx.fill();
+      topCtx.strokeStyle = "#000";
+      topCtx.lineWidth = 2;
+      topCtx.stroke();
+
+      if (rMin > 0) {
+        topCtx.beginPath();
+        topCtx.arc(cx, cy, topLen(rMin), 0, Math.PI * 2);
+        topCtx.fillStyle = "rgba(128,128,128,0.5)";
+        topCtx.fill();
+        topCtx.strokeStyle = "#000";
+        topCtx.lineWidth = 1.5;
+        topCtx.stroke();
+      }
+
+      topCtx.strokeStyle = "#000";
+      topCtx.lineWidth = 1.5;
+      topCtx.beginPath();
+      const [rx0, ry0] = topToPx(0, 0);
+      const [rx1, ry1] = topToPx(0, -R);
+      topCtx.moveTo(rx0, ry0);
+      topCtx.lineTo(rx1, ry1);
+      topCtx.stroke();
+
+      const numSamples = 8;
+      const tipPts = [];
+      for (let i = 0; i < numSamples; i++) {
+        const r = rMin + (i / (numSamples - 1)) * (R - rMin);
+        const x0 = 0, y0 = -r;
+        drawArrow(topCtx, topToPx, x0, y0, x0 + arrowLen, y0, "#1a4fd6", 1.8);
+        tipPts.push([x0 + arrowLen, y0]);
+      }
+      topCtx.strokeStyle = "rgba(26,79,214,0.6)";
+      topCtx.lineWidth = 2;
+      topCtx.beginPath();
+      tipPts.forEach(([x, y], i) => {
+        const [px, py] = topToPx(x, y);
+        if (i === 0) topCtx.moveTo(px, py); else topCtx.lineTo(px, py);
+      });
+      topCtx.stroke();
+
+      topCtx.font = "13px -apple-system, sans-serif";
+      topCtx.fillStyle = "#000";
+      topCtx.textAlign = "left";
+      const boxW = 190, boxH = 44;
+      topCtx.fillStyle = "rgba(255,255,255,0.85)";
+      topCtx.fillRect(8, 8, boxW, boxH);
+      topCtx.strokeStyle = "#ccc";
+      topCtx.strokeRect(8, 8, boxW, boxH);
+      topCtx.fillStyle = "#000";
+      topCtx.fillText(`z/h_max = ${altitudeFrac.toFixed(2)}`, 16, 26);
+      topCtx.fillText(`v_θ = ${v.toFixed(2)} (same for all r)`, 16, 44);
+
+      // ---- SIDE VIEW ----
+      sideCtx.clearRect(0, 0, sideCanvas.width, sideCanvas.height);
+      const sideToPx = makeSideTransform(hMax);
+
+      sideCtx.strokeStyle = "#000";
+      sideCtx.lineWidth = 3;
+      sideCtx.beginPath();
+      let [p1, p2] = [sideToPx(-1, 0), sideToPx(1, 0)];
+      sideCtx.moveTo(p1[0], p1[1]);
+      sideCtx.lineTo(p2[0], p2[1]);
+      sideCtx.stroke();
+      sideCtx.font = "12px -apple-system, sans-serif";
+      sideCtx.fillStyle = "#000";
+      sideCtx.textAlign = "center";
+      let [tx, ty] = sideToPx(0, -0.12 * hMax);
+      sideCtx.fillText("Stationary plate", tx, ty);
+
+      sideCtx.beginPath();
+      [p1, p2] = [sideToPx(-1, hMax), sideToPx(1, hMax)];
+      sideCtx.moveTo(p1[0], p1[1]);
+      sideCtx.lineTo(p2[0], p2[1]);
+      sideCtx.stroke();
+      [tx, ty] = sideToPx(0, hMax * 1.08);
+      sideCtx.fillText("Rotating cone", tx, ty);
+
+      sideCtx.strokeStyle = "#000";
+      sideCtx.lineWidth = 2;
+      sideCtx.beginPath();
+      const steps = 50;
+      for (let i = 0; i <= steps; i++) {
+        const zv = (i / steps) * hMax;
+        const vv = zv / hMax;
+        const [px, py] = sideToPx(vv, zv);
+        if (i === 0) sideCtx.moveTo(px, py); else sideCtx.lineTo(px, py);
+      }
+      sideCtx.stroke();
+
+      sideCtx.strokeStyle = "#e00";
+      sideCtx.lineWidth = 2;
+      sideCtx.beginPath();
+      [p1, p2] = [sideToPx(0, z), sideToPx(1.1, z)];
+      sideCtx.moveTo(p1[0], p1[1]);
+      sideCtx.lineTo(p2[0], p2[1]);
+      sideCtx.stroke();
+      sideCtx.fillStyle = "#e00";
+      [tx, ty] = sideToPx(0, z + 0.03 * hMax);
+      sideCtx.fillText(`z/h = ${altitudeFrac.toFixed(2)}`, tx, ty);
+
+      sideCtx.fillStyle = "#000";
+      sideCtx.font = "13px -apple-system, sans-serif";
+      sideCtx.textAlign = "center";
+      sideCtx.fillText("Velocity", sideCanvas.width / 2, sideCanvas.height - 8);
+      sideCtx.save();
+      sideCtx.translate(14, sideCanvas.height / 2);
+      sideCtx.rotate(-Math.PI / 2);
+      sideCtx.fillText("Height", 0, 0);
+      sideCtx.restore();
+    }
+
+    function update() {
+      const v = parseFloat(slider.value);
+      label.textContent = v.toFixed(2);
+      render(v);
+    }
+
+    slider.addEventListener("input", update);
+    update();
+  })();
+
+  // ============================================================
+  // PANEL 3: local gap velocity profile (cone angle = 22 degrees)
+  // ============================================================
+  (function () {
+    const coneAngleDeg = 22;
+    const alpha = (coneAngleDeg * Math.PI) / 180;
+
+    const canvas = document.getElementById("visc-gapView");
+    const ctx = canvas.getContext("2d");
+    const slider = document.getElementById("visc-rSlider");
+    const label = document.getElementById("visc-rValue");
+
+    const maxGap = R * Math.tan(alpha);
+    const visualScale = 0.4;
+
+    const xMin = -0.05, xMax = R + Math.abs(Omega) * R * visualScale * 1.1;
+    const yMin = -0.1 * maxGap, yMax = 1.25 * maxGap;
+
+    const pad = 50;
+    const availW = canvas.width - 2 * pad;
+    const availH = canvas.height - 2 * pad;
+    const scale = Math.min(availW / (xMax - xMin), availH / (yMax - yMin));
+
+    const offsetX = pad + (availW - scale * (xMax - xMin)) / 2;
+    const offsetY = pad + (availH - scale * (yMax - yMin)) / 2;
+
+    function toPx(x, y) {
+      const px = offsetX + (x - xMin) * scale;
+      const py = canvas.height - offsetY - (y - yMin) * scale;
+      return [px, py];
+    }
+
+    function drawArrow(fromX, fromY, toX, toY, color, width) {
+      const [fx, fy] = toPx(fromX, fromY);
+      const [tx, ty] = toPx(toX, toY);
+      const headLen = 7;
+      const angle = Math.atan2(ty - fy, tx - fx);
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(fx, fy);
+      ctx.lineTo(tx, ty);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(tx - headLen * Math.cos(angle - Math.PI / 6), ty - headLen * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(tx - headLen * Math.cos(angle + Math.PI / 6), ty - headLen * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function render(rSampleRaw) {
+      const rSample = Math.min(Math.max(rSampleRaw, 1e-6), R);
+      const hLocal = rSample * Math.tan(alpha);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      let [p1, p2] = [toPx(0, 0), toPx(R, 0)];
+      ctx.moveTo(p1[0], p1[1]);
+      ctx.lineTo(p2[0], p2[1]);
+      ctx.stroke();
+
+      ctx.beginPath();
+      [p1, p2] = [toPx(0, 0.4), toPx(R, 0.4)];
+      ctx.moveTo(p1[0], p1[1]);
+      ctx.lineTo(p2[0], p2[1]);
+      ctx.stroke();
+
+      ctx.beginPath();
+      const steps = 100;
+      for (let i = 0; i <= steps; i++) {
+        const r = (i / steps) * R;
+        const z = r * Math.tan(alpha);
+        const [px, py] = toPx(r, z);
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      ctx.strokeStyle = "#e00";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      [p1, p2] = [toPx(rSample, 0), toPx(rSample, hLocal)];
+      ctx.moveTo(p1[0], p1[1]);
+      ctx.lineTo(p2[0], p2[1]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "#e00";
+      ctx.font = "13px -apple-system, sans-serif";
+      ctx.textAlign = "center";
+      // Nudged further below the plate line so the label doesn't sit on top of it
+      const [rlx, rly] = toPx(rSample, -0.18 * R * Math.tan(alpha));
+      ctx.fillText(`r = ${rSample.toFixed(2)}`, rlx, rly);
+
+      if (hLocal > 0) {
+        const numArrows = 8;
+        for (let i = 0; i < numArrows; i++) {
+          const z = (i / (numArrows - 1)) * hLocal;
+          const vTheta = Math.abs(Omega) * rSample * (z / hLocal);
+          const arrowLength = vTheta * visualScale;
+          drawArrow(rSample, z, rSample + arrowLength, z, "#1a4fd6", 2);
+        }
+
+        ctx.strokeStyle = "#1a4fd6";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        const profileSteps = 100;
+        for (let i = 0; i <= profileSteps; i++) {
+          const z = (i / profileSteps) * hLocal;
+          const vTheta = Math.abs(Omega) * rSample * (z / hLocal);
+          const [px, py] = toPx(rSample + vTheta * visualScale, z);
+          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+      }
+
+      const vTop = Math.abs(Omega) * rSample;
+      const infoLines = [
+        `Cone angle = ${coneAngleDeg}°`,
+        `Local gap = ${hLocal.toFixed(3)}`,
+        `v_top = ${vTop.toFixed(2)}`
+      ];
+      const boxX = 12, boxY = 12, boxW = 200, boxH = 18 + infoLines.length * 18;
+      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      ctx.fillRect(boxX, boxY, boxW, boxH);
+      ctx.strokeStyle = "#ccc";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(boxX, boxY, boxW, boxH);
+      ctx.fillStyle = "#111";
+      ctx.font = "13px -apple-system, sans-serif";
+      ctx.textAlign = "left";
+      infoLines.forEach((line, i) => ctx.fillText(line, boxX + 10, boxY + 20 + i * 18));
+
+      ctx.fillStyle = "#000";
+      ctx.font = "13px -apple-system, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Radius + visualised v_θ", canvas.width / 2, canvas.height - 10);
+      ctx.save();
+      ctx.translate(16, canvas.height / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText("Height", 0, 0);
+      ctx.restore();
+    }
+
+    function update() {
+      const v = parseFloat(slider.value);
+      label.textContent = v.toFixed(2);
+      render(v);
+    }
+
+    slider.addEventListener("input", update);
+    update();
+  })();
+})();
+</script>

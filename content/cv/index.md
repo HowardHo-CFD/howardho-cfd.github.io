@@ -12,7 +12,7 @@ showWordCount: false
 
 - Ph.D., University of Toronto, 2026
 - M.A.Sc., University of Toronto, 2021
-- B.Eng., Univerisyt of Nottingham, 2019
+- B.Eng., Univeristy of Nottingham, 2019
 
 
-[Download Full CV (PDF)](/files/Howard_Ho_CV.pdf)
+[Full CV (PDF)](../../files/Howard_Ho_CV.pdf)
