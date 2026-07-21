@@ -1,8 +1,8 @@
-isoCode = "en"
-displayName = "English"
-
+colorScheme = "ocean"
 enableSearch = true
 enableCodeCopy = true
+defaultAppearance = "dark" # Options: "light", "dark", "system"
+autoSwitchAppearance = false
 
 mainSections = ["posts"]
 

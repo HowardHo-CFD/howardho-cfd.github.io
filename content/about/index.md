@@ -8,7 +8,7 @@ showWordCount: false
 
 <div style="text-align: center;">
 
-{{< figure src="/img/my_photo.jpg" width="500" alt="Howard Ho" class="mx-auto" >}}
+{{< figure src="/img/my-photo.jpg" width="500" alt="Howard Ho" class="mx-auto" >}}
 
 # Dr. Howard Haonan Ho
 
@@ -16,7 +16,7 @@ showWordCount: false
 
 Dr. Howard Haonan Ho completed his undergraduate degree in Mechanical Engineering at the University of Nottingham and was awarded the Best Project award from the Institution of Mechanical Engineers (UK). After this, he obtained his M.A.Sc. and Ph.D. in the area of Computational Fluid Dynamcis from the University of Toronto. While doing his Ph.D., Dr. Ho completed a 2-year certification program in higher education teaching.
 
-At the University of TOronto, he led a research project investigating turbulence modeling of Synthetic Jet Actuator (SJA) arrays with open-loop control systems on a bluff bodies using high-performance computing. He has published multiple peer-reviewed papers in the ASME Journal of Fluids Engineering and Physics of Fluids and has presented multiple conference papers. As an instructor and teaching assistant, he has extensive experience teaching fluid mechanics, dynamics, and computational fluid dynamics.
+At the University of Toronto, he led a research project investigating turbulence modeling of Synthetic Jet Actuator (SJA) arrays with open-loop control systems on a bluff bodies using high-performance computing. He has published multiple peer-reviewed papers in the ASME Journal of Fluids Engineering and Physics of Fluids and has presented multiple conference papers. As an instructor and teaching assistant, he has extensive experience teaching fluid mechanics, dynamics, and computational fluid dynamics.
 
 <div style="display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap;">
 

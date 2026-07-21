@@ -13,7 +13,7 @@ title = "Dr. Howard Haonan Ho"
 
 [params.author]
   name = "Dr. Howard Haonan Ho"
-  image = "img/my_photo.jpg" #{{< figure src="/img/my_photo.jpg" width="500" alt="Howard Ho" class="mx-auto" >}}
+  image = "img/my-photo.jpg"
   #headline = "This is my website with my links"
   # bio = "A little bit about you"
    links = [
