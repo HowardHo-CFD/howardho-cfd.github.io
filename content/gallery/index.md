@@ -4,6 +4,7 @@ layout: "simple"
 showDate: false
 showReadingTime: false
 showWordCount: false
+#{{< figure src="/img/my-photo.jpg" width="500" alt="Howard Ho" class="mx-auto" >}}
 gallery_media:
   - src: "/img/my-photo.jpg"
     caption: "Dr. Howard Haonan Ho"

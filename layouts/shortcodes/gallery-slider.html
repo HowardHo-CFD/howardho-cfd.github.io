@@ -118,16 +118,20 @@
   <button class="slider-btn prev-btn" onclick="prevGallerySlide()">&#10094;</button>
   <div class="gallery-slides" id="gallerySlides">
     {{ range .Page.Params.gallery_media }}
-      {{ $src := . }}
+      {{ $src := "" }}
       {{ $caption := "" }}
       {{ if reflect.IsMap . }}
         {{ $src = .src }}
         {{ $caption = .caption }}
+      {{ else }}
+        {{ $src = . }}
       {{ end }}
+
       {{ $url := $src | relURL }}
 
       <div class="gallery-slide">
-        {{ if or (hasSuffix $src ".mp4") (hasSuffix $src ".webm") (hasSuffix $src ".avi") }}
+        {{ $srcLower := lower $src }}
+        {{ if or (hasSuffix $srcLower ".mp4") (hasSuffix $srcLower ".webm") }}
           <video src="{{ $url }}" autoplay loop muted playsinline onclick="openLightbox(this.src, 'video', '{{ $caption }}')"></video>
         {{ else }}
           <img src="{{ $url }}" alt="{{ $caption }}" onclick="openLightbox(this.src, 'image', '{{ $caption }}')">
@@ -174,15 +178,15 @@
   window.openLightbox = function(src, type, caption) {
     const lightbox = document.getElementById('lightbox');
     const content = document.getElementById('lightboxContent');
-    const captionEl = document.getElementById('lightboxCaption');
-    
+    caption = caption || '';
+
     if (type === 'video') {
       content.innerHTML = `<video src="${src}" autoplay loop muted controls playsinline></video>`;
     } else {
       content.innerHTML = `<img src="${src}" alt="Enlarged Media">`;
     }
 
-    captionEl.textContent = caption || '';
+    document.getElementById('lightboxCaption').textContent = caption;
     lightbox.style.display = 'flex';
   };
 
@@ -191,7 +195,7 @@
       const lightbox = document.getElementById('lightbox');
       const content = document.getElementById('lightboxContent');
       lightbox.style.display = 'none';
-      content.innerHTML = ''; // Stops video audio/playback on close
+      content.innerHTML = '';
     }
   };
 })();
