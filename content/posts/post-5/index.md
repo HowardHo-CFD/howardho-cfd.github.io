@@ -1,33 +1,33 @@
 ---
-title: "I Successfully Defended My PhD! 🌟"
+title: "Published & Cover Article: Synthetic Jet Actuators for Active Flow Control 📖"
 layout: "simple"
-summary: "Reflecting on 10 years of post-secondary education, completing my PhD at the University of Toronto, and asking 'What's next?'"
-categories: ["Announcements", "Academia"]
-tags: ["PhD", "PhD Defense", "Research", "Engineering", "UofT"]
-date: 2026-07-21
+summary: "Thrilled to share that our review paper on Synthetic Jet Actuators (SJAs) was published in MDPI Fluids and selected as the Issue Cover!"
+categories: ["Publications", "Research"]
+tags: ["SJA", "Synthetic Jets", "Active Flow Control", "Aerodynamics", "MDPI", "Open Access"]
+date: 2024-12-10
 draft: false
 ---
 
+{{< img-fit src="/img/posts/mdpi-review-paper-cover.JPG" alt="MDPI Fluids Issue Cover Featuring Synthetic Jet Actuators" max="600px" >}}
+
 <div style="text-align: justify;">
 
-I have successfully defended my PhD!
-
-I would first like to thank my supervisors, **Prof. Pierre Sullivan** and **Prof. Ebenezer Ekow Essel, P. Eng.**, for their encouragement, support, and wisdom throughout this journey. I am also incredibly grateful to my committee members, **Prof. Cristina Amon** and **Prof. Ali Dolatabadi**, for their guidance during my doctoral study. In addition, I would like to thank **Prof. Barbara da Silva** for serving as the external examiner for my defense.
-
-For anyone interested, a recorded version of the presentation can be accessed here:  
-🔗 [Howard Haonan Ho - Doctoral Defense Presentation](https://lnkd.in/gudrj5Mb)
+I'm thrilled to announce the publication of my latest review paper titled **"Synthetic Jet Actuators for Active Flow Control: A Review"** in *Fluids* (MDPI)! This comprehensive review paper explores the fundamental working mechanisms, design considerations, and practical applications of **Synthetic Jet Actuators (SJAs)** for active aerodynamic flow control.
 
 ---
 
-It has been exactly 10 years since I began my undergraduate degree at the University of Nottingham, and now I have completed my third (and hopefully the final) degree at the University of Toronto.
+### ✨ Special Highlight
 
-A wise person once told me, *"4 years kinda just fly by"*, and it really has. Looking back, my past 10 years also sort of just flew by. It begs the question: **"How fast will 40 years also fly by?"**
+Our paper was selected as the **Cover Article** and received the **MDPI Fluids Best Paper Award**.
 
-I look forward to the most exciting (and also the scariest) part of graduating — **"What's next?"** To that, I think of the old Chinese idiom:
+---
 
-> **"船到橋頭自然直"**  
-> *(Loosely translates to: "Things have a way of working themselves out.")*
+### 📖 Read the Paper
 
-I'm excited to see where the next chapter leads! 🙂
+The paper is fully open-access and available to read online:
+
+🔗 [Read Full Open-Access Paper on MDPI](https://doi.org/10.3390/fluids9120290)
+
+I hope the insights on SJA design principles and flow manipulation mechanisms prove useful for your research and applications in active flow control!
 
 </div>
