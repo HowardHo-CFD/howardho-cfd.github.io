@@ -18,7 +18,7 @@ title = "Dr. Howard Haonan Ho"
   # bio = "A little bit about you"
    links = [
      { google-scholar = "https://scholar.google.com/citations?user=LVaDiJ0AAAAJ&hl=en" },
-     { github = "https://github.com/nunocoracao/blowfish" },
+     { github = "https://github.com/HowardHo-CFD" },
      { linkedin = "https://www.linkedin.com/in/howard-haonan-ho/" },
      { youtube = "https://www.youtube.com/@HowardHo-n7i" },
      { researchgate = "https://www.researchgate.net/profile/Howard-Ho-4?ev=hdr_xprf"}
