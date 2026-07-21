@@ -8,9 +8,7 @@ date: 2023-11-22
 draft: false
 ---
 
-<div style="text-align: center; margin: 1.5rem 0;">
-  <img src="/img/posts/aps-23-presentation.JPG" alt="APS DFD Presentation in Washington DC" style="width: 75%; max-width: 750px; border-radius: 8px; height: auto; margin: 0 auto; display: block;">
-</div>
+{{< img-fit src="/img/posts/aps-23-presentation.JPG" alt="APS DFD Presentation in Washington DC" max="750px" >}}
 
 <div style="text-align: justify;">
 
