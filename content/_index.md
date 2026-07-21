@@ -15,4 +15,3 @@ showSummary : false
 sharingLinks : false
 ---
 
-Welcome to my academic website.

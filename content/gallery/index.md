@@ -5,10 +5,8 @@ showDate: false
 showReadingTime: false
 showWordCount: false
 gallery_media:
-  - src: "/img/laminar-sja-quiescent.mp4"    # MP4 Animation / Video
-    caption: "Laminar Synthetic Jet In Quiescent."
-  - src: "/img/turbulent-sja-quiescent.mp4"    # MP4 Animation / Video
-    caption: "Turbuelnt SYntehtic Jet In Quiscent." 
+  - src: "/img/sja-quiescent.mp4"    # MP4 Animation / Video
+    caption: "Synthetic Jet Actuators in Quiescent Flow: Laminar (Left) vs. Turbulent (Right)"
   - src: "/img/cylinder-baseline.gif"    # MP4 Animation / Video
     caption: "Flow over a Circular Cylinder at Re_D=3,900." 
   - src: "/img/cylinder-9-sjas.gif"    # MP4 Animation / Video

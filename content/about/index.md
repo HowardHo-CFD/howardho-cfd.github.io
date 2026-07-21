@@ -22,7 +22,13 @@ At the University of Toronto, he led a research project investigating turbulence
 
 </div>
 
-[Full CV (PDF)](../../files/Howard_Ho_CV.pdf)
+### Curriculum Vitae
+
+<div style="margin-top: 1rem;">
+  {{< button href="../../files/Howard_Ho_CV.pdf" target="_blank" >}}
+    📥 Download Full CV (PDF)
+  {{< /button >}}
+</div>
 
 ### Education
 

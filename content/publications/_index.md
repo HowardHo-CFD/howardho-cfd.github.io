@@ -65,16 +65,18 @@ showWordCount: false
 
 ---
 
-### Symposiums & Non-Refereed Presentations
+### Symposiums & Submitted Reports
 
 <ol reversed>
+  <li><b>Ho, H.H.</b> (2026). THE Chicken Report. <i>Technical Report Submitted to the University of Toronto Turbulence Research Lab</i>, Toronto, ON, Canada.</li>
+
   <li><b>Ho, H.H.</b>, Essel, E.E., and Sullivan, P.E. (2026). Large Eddy Simulation of Active Flow Control on a Circular Cylinder. <i>MIE Graduate Research Symposium</i>, Toronto, ON, Canada.</li>
 
   <li><b>Ho, H.H.</b>, Essel, E.E., and Sullivan, P.E. (2023). Synthetic Jet Issuing Into A Crossflow. <i>MIE Graduate Research Symposium</i>, Toronto, ON, Canada.</li>
 
   <li><b>Ho, H.H.</b>, and Jefferson-Loveday, R. (2019). An Experimental Investigation of Oil Churning and Flow Regimes Within a Model Gearbox. <i>IBP Research Symposium</i>, Nottingham, UK.</li>
 
-  <li><b>Ho, H.H.</b>, and Jefferson-Loveday, R. (2019). An Experimental Investigation of Oil Churning and Flow Regimes. <i>Technical Submitted Report to Romax Technology</i>, Nottingham, UK.</li>
+  <li><b>Ho, H.H.</b>, and Jefferson-Loveday, R. (2019). An Experimental Investigation of Oil Churning and Flow Regimes. <i>Technical Report Submitted to Romax Technology</i>, Nottingham, UK.</li>
 </ol>
 
 </div>

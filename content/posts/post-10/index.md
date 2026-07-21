@@ -4,7 +4,7 @@ layout: "simple"
 summary: "Presented research on Synthetic Jet Actuators for active flow control over a cylinder at CSME-CFDSC-CSR 2026 in Vancouver, supported by the MDPI Fluids Travel Award."
 categories: ["Conferences", "Awards", "Research"]
 tags: ["CSME", "CFDSC", "CSR", "MDPI", "Travel Award", "SJA", "CFD", "LES", "Vancouver"]
-date: 2026-06-15
+date: 2026-05-27
 draft: false
 gallery_media:
   - src: "/img/posts/csme-26-1.JPG"
