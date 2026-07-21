@@ -1,0 +1,9 @@
+{{ $src := .Get "src" | default (.Get 0) }}
+{{ $alt := .Get "alt" | default "" }}
+{{ $maxWidth := .Get "max" | default "850px" }}
+{{ $cleanSrc := strings.TrimPrefix "/" $src }}
+{{ $url := $cleanSrc | relURL }}
+
+<div style="text-align: center; margin-bottom: 1.5rem;">
+  <img src="{{ $url }}" alt="{{ $alt }}" style="max-width: {{ $maxWidth }}; width: 100%; height: auto; border-radius: 8px; margin: 0 auto; display: block;">
+</div>

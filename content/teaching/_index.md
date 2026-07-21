@@ -6,21 +6,10 @@ showReadingTime: false
 showWordCount: false
 ---
 
-<div style="text-align: center; margin-bottom: 1.5rem;">
-  <img src="/img/my-teaching.jpg" alt="Howard Ho Teaching" style="width: 850px !important; max-width: 100% !important; height: auto; border-radius: 8px; margin: 0 auto; display: block;">
-</div>
-
-<div style="text-align: justify;">
-
-{{< figure src="/img/my-teaching.jpg" width="500" alt="Howard Ho Teaching" class="mx-auto rounded-lg max-w-full h-auto mb-6" >}}
-
-<div style="text-align: center; margin-bottom: 1.5rem;">
-  <img src="/img/my-teaching.jpg" alt="Howard Ho" style="width: 850px; max-width: 100%; height: auto; border-radius: 8px; margin: 0 auto; display: block;">
-</div>
+{{< img-fit src="/img/my-teaching.jpg" alt="Howard Ho Teaching" max="850px" >}}
 
 <div style="text-align: justify;">
 Dr. Howard Haonan Ho has over 6 years of higher education teaching experience at the University of Toronto. He served as the Course Instructor for MIE 100 Dynamics (650 undergraduate students), receiving an instructor evaluation score of 3.9/5.0 (department mean 3.7/5.0). He was shortlisted for the <b>University of Toronto Teaching Excellence Award (2025)</b> for his work in 2024. His pedagogical approach combines a flipped-classroom model, real-time digital engagement, and active learning using custom interactive simulators. He also completed <i>TEP 1203: Teaching Engineering in Higher Education</i> through the Prospective Professors in Training (PPIT) program at the University of Toronto.
-
 </div>
 
 ---
