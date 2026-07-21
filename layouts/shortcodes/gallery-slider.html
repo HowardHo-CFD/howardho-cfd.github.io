@@ -127,7 +127,9 @@
         {{ $src = . }}
       {{ end }}
 
-      {{ $url := $src | relURL }}
+      #{{ $url := $src | relURL }}
+      {{ $cleanSrc := strings.TrimPrefix "/" $src }}
+      {{ $url := $cleanSrc | relURL }}
 
       <div class="gallery-slide">
         {{ $srcLower := lower $src }}

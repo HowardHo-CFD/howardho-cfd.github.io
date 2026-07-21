@@ -23,9 +23,4 @@ gallery_media:
 
 {{< gallery-slider >}}
 
-# Dr. Howard Haonan Ho
-
 </div>
-
-# Biography
-Dr. Howard Haonan Ho completed his undergraduate degree in Mechanical Engineering...
