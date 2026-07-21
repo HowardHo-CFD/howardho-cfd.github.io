@@ -3,13 +3,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 8px 18px 8px;
+    padding: 20px;
     box-sizing: border-box;
+    background-color: #ffffff;
+    color: #111111;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin: 1.5rem 0;
   }
-  canvas {
-    max-width: 100%;
+  #wrap canvas {
+    max-width: 90%;
     height: auto;
     border-radius: 8px;
+    background-color: #ffffff;
   }
   #controls {
     width: 100%;
@@ -320,7 +326,7 @@
     ctx.lineTo(legX + 15, ly + 7);
     ctx.stroke();
     ctx.fillStyle = "#000";
-    ctx.fillText("Centroid", legX + 30, ly + 5);
+    ctx.fillText("CG (Gravitational Centre)", legX + 30, ly + 5);
 
     // Centre of pressure entry
     ly = legY + legRowH * 1.5;
@@ -332,7 +338,7 @@
     ctx.lineTo(legX + 15, ly + 7);
     ctx.stroke();
     ctx.fillStyle = "#d00000";
-    ctx.fillText("Centre of pressure", legX + 30, ly + 5);
+    ctx.fillText("CP (Centre of pressure)", legX + 30, ly + 5);
 
     // ---- Info box ----
     const infoLines = [

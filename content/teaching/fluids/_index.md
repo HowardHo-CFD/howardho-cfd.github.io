@@ -4,6 +4,9 @@ layout: "simple"
 showDate: false
 showReadingTime: false
 showWordCount: false
+summary: " 
+    :zap: Interactive Tools
+    :books: Slides and Handouts"
 ---
 
 Course materials for Fluid Mechanics.
