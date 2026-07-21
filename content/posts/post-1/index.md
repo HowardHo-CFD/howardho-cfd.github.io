@@ -1,25 +1,37 @@
 ---
-title: "Super cool article that I wrote"
-summary: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in eleifend justo, vestibulum congue lacus. Quisque est libero, lacinia sed placerat ac, interdum id urna."
-categories: ["Post","Blog",]
-tags: ["post","lorem","ipsum"]
-#externalUrl: ""
-#showSummary: true
-date: 2022-09-04
+title: "Presenting at APS DFD in Washington DC 🏛️"
+layout: "simple"
+summary: "Collaborative research between UofT and Concordia University presented at APS DFD, proposing a cost-efficient and accurate method for modeling Synthetic Jet Actuators in crossflow."
+categories: ["Conferences", "Research"]
+tags: ["APS DFD", "CFD", "Synthetic Jets", "Fluid Dynamics", "Washington DC", "UofT", "Concordia"]
+date: 2023-11-22
 draft: false
 ---
 
-## Lorem ipsum dolor sit amet
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in eleifend justo, vestibulum congue lacus. Quisque est libero, lacinia sed placerat ac, interdum id urna. Nulla venenatis volutpat libero, in laoreet leo fringilla eget. Etiam consequat sed nisi sit amet interdum. Pellentesque ullamcorper at turpis in ultrices. Pellentesque et elit mauris. Aenean eu augue sit amet nunc interdum ultricies. Aenean eleifend consectetur sapien vitae consectetur. Donec risus mauris, finibus at condimentum at, lacinia sit amet neque. Nulla facilisi. Suspendisse sollicitudin dolor quis eros tempor, a tempus ex varius.
+<div style="text-align: center; margin: 1.5rem 0;">
+  <img src="/img/posts/aps-23-presentation.JPG" alt="APS DFD Presentation in Washington DC" style="width: 75%; max-width: 750px; border-radius: 8px; height: auto; margin: 0 auto; display: block;">
+</div>
 
-## Nunc non leo non magna
-Nunc non leo non magna ornare condimentum. Phasellus consequat nunc ut tellus porttitor bibendum. In pharetra ullamcorper metus quis mollis. Mauris bibendum, est in commodo hendrerit, dolor purus hendrerit dolor, at pharetra sapien erat sit amet ante. Etiam aliquet euismod libero, vel tincidunt felis mollis at. Sed scelerisque, tortor in convallis auctor, elit quam consectetur lacus, quis posuere risus libero non sem. Mauris sagittis nisi id aliquam lacinia. Vivamus finibus velit sed condimentum aliquet. Nullam in ante a erat lacinia semper. Curabitur pretium justo at leo maximus, quis dignissim nulla posuere. Donec eget consectetur neque, et mattis dui. Vivamus at mi enim. Nullam et nisi est. Nullam eget eros blandit, convallis odio eget, ornare enim.
+<div style="text-align: justify;">
 
-## Quisque ultricies
-Quisque ultricies tincidunt sem nec tincidunt. Aenean nibh diam, dapibus varius ornare nec, suscipit ut arcu. Integer ut elit sollicitudin, fermentum ipsum nec, tempus eros. Donec hendrerit facilisis maximus. Pellentesque eu mi ipsum. Vivamus diam tellus, varius sed dolor at, finibus tempus lorem. Morbi sed mauris quis enim vehicula hendrerit. Sed et sollicitudin est. Maecenas scelerisque ligula ac purus gravida, et feugiat nibh blandit. Integer id quam ac arcu convallis interdum eget sed libero. Aliquam varius est quis efficitur efficitur. Cras id turpis magna. Aenean cursus, libero auctor ullamcorper vestibulum, nisl risus consectetur nisi, ut molestie enim libero sed ipsum.
+I had the pleasure to present some of my recent work at **APS DFD** (*American Physical Society Division of Fluid Dynamics*) in Washington, DC! 
 
-## Etiam sollicitudin
-Etiam sollicitudin, ante ac fermentum varius, lorem ante congue mi, auctor dictum magna sem sed nibh. In et est id neque gravida aliquet quis a felis. Mauris tempor lectus ut gravida ornare. Curabitur at elementum tortor, in feugiat elit. Aenean auctor diam ut egestas rhoncus. Quisque tristique venenatis risus vitae suscipit. Nunc feugiat purus sed dolor gravida, non ullamcorper metus suscipit. Sed et tortor odio. Pellentesque at scelerisque nulla. In ut aliquam metus. Vivamus congue augue at pellentesque rhoncus. Donec a lectus tincidunt, aliquet libero sit amet, commodo arcu. Vivamus hendrerit quis augue eu lacinia. Sed sodales velit condimentum eros varius vulputate.
+As a collaboration between the **University of Toronto Turbulence Research Lab** and the **Concordia University Turbulence Research Lab**, we investigated different methods for modeling Synthetic Jet Actuators (SJA) in a turbulent crossflow. Through this joint effort, a cost-efficient and accurate modeling method was proposed.
 
-## Proin tempor lorem
-Proin tempor lorem quam, ac maximus lectus sodales et. Sed laoreet orci vel metus luctus lobortis. Nam ex velit, vehicula id tristique sed, blandit eu nisi. Quisque semper libero nec massa malesuada congue. In faucibus lorem at diam fringilla, vel viverra magna lobortis. Ut commodo est urna, ut aliquet enim sagittis ut. Nulla posuere arcu sed lobortis accumsan. Phasellus fringilla dolor id est lobortis feugiat. Quisque enim elit, faucibus a mauris non, mattis aliquet orci. Nunc sagittis viverra erat, id condimentum lacus suscipit quis.
+</div>
+
+---
+
+### 📹 Presentation Recording
+
+A recording of the presentation will be uploaded to the University of Toronto Turbulence Research Lab YouTube channel:
+
+🎥 [Watch APS DFD Presentation: Enhanced Modelling of 3D SJAs in Crossflow](https://www.youtube.com/watch?v=LzzA-UVjBRc)
+
+---
+
+<div style="text-align: justify;">
+
+*Special thanks to my collaborators at both UofT and Concordia University for making this research possible!*
+
+</div>
