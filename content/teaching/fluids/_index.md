@@ -38,6 +38,7 @@ summary: "
 
 - [Buoyancy Simulator](interactive-tools/buoyancy/)
 - [Hydrostatic Pressure Simulator](interactive-tools/hydrostatic-pressure/)
+- [Curved Plate Pressure Simulator](interactive-tools/curved-plate-pressure/)
 - [Cone Viscometer Velocity Profile Simulator](interactive-tools/cone-viscometer/)
 
 ## Slides and Handouts :book:

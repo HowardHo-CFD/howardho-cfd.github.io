@@ -1,0 +1,356 @@
+<style>
+  #wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    color: #111111;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin: 1.5rem 0;
+  }
+  #canvasRow {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .canvas-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+  .canvas-col h3 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    color: #222;
+    font-family: -apple-system, sans-serif;
+  }
+  #wrap canvas {
+    width: 460px;
+    height: auto;
+    border-radius: 8px;
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+  }
+  #controls {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .control-row label {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    width: 110px;
+  }
+  .control-row input[type="range"] {
+    flex: 1;
+  }
+  .control-row .val {
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    color: #333;
+    min-width: 70px;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<div id="wrap">
+  <div id="canvasRow">
+    <div class="canvas-col">
+      <h3>Pressure Magnitude (P)</h3>
+      <canvas id="canvasMag" width="900" height="649"></canvas>
+    </div>
+    <div class="canvas-col">
+      <h3>Horizontal &amp; Vertical Components (P<sub>x</sub>, P<sub>y</sub>)</h3>
+      <canvas id="canvasComp" width="900" height="649"></canvas>
+    </div>
+  </div>
+  <div id="controls">
+    <div class="control-row">
+      <label for="ySlider">Y extent (m)</label>
+      <input type="range" id="ySlider" min="2.0" max="15.0" step="0.5" value="4.0">
+      <span id="yValue" class="val">4.00 m</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const canvasMag = document.getElementById("canvasMag");
+  const canvasComp = document.getElementById("canvasComp");
+  const ctxMag = canvasMag.getContext("2d");
+  const ctxComp = canvasComp.getContext("2d");
+  const ySlider = document.getElementById("ySlider");
+  const yLabel = document.getElementById("yValue");
+
+  // ---- Constants (mirrors the Python model) ----
+  const rho = 1000;
+  const g = 9.81;
+  const plateWidth = 1.0;
+  const nPoints = 21;
+
+  const X_FIXED = 15.0;
+  const X_MAX = 15.0;
+  const Y_MAX = 15.0;
+  const PAD_WATER = Math.max(2.5, X_MAX * 0.4);
+  const PAD_BANK = 2.0;
+  const PAD_TOP = 1.6;
+
+  const ARROW_SCALE = 3.0;
+
+  // World coordinate space (fixed viewport -> stable zoom)
+  const worldXMin = -PAD_WATER, worldXMax = X_MAX + PAD_BANK;
+  const worldYMin = -Y_MAX, worldYMax = PAD_TOP;
+
+  const W = canvasMag.width;
+  const H = canvasMag.height;
+
+  function toPx(x, y) {
+    const px = ((x - worldXMin) / (worldXMax - worldXMin)) * W;
+    const py = H - ((y - worldYMin) / (worldYMax - worldYMin)) * H;
+    return [px, py];
+  }
+
+  // ---- Curve geometry ----
+  function computeCurve(X, Y, n) {
+    const t = [];
+    for (let i = 0; i < n; i++) t.push((i / (n - 1)) * (Math.PI / 2));
+
+    const x = t.map(ti => X * Math.cos(ti));
+    const y = t.map(ti => -Y * Math.sin(ti));
+
+    const nxRaw = t.map(ti => Math.cos(ti) / X);
+    const nyRaw = t.map(ti => -Math.sin(ti) / Y);
+    const norm = nxRaw.map((v, i) => Math.hypot(v, nyRaw[i]));
+    const nx = nxRaw.map((v, i) => v / norm[i]);
+    const ny = nyRaw.map((v, i) => nyRaw[i] / norm[i]);
+
+    return { x, y, nx, ny };
+  }
+
+  // ---- Reference scale computed ONCE at max depth (Y_MAX), fixed X ----
+  const ref = computeCurve(X_FIXED, Y_MAX, nPoints);
+  const depthRef = ref.y.map(v => -v);
+  const P_ref = depthRef.map(d => rho * g * d);
+  const Px_ref = P_ref.map((p, i) => p * ref.nx[i]);
+  const Py_ref = P_ref.map((p, i) => p * ref.ny[i]);
+
+  const P_REFERENCE_MAX = Math.max(...P_ref);
+  const COMPONENT_REFERENCE_MAX = Math.max(...Px_ref.map(Math.abs), ...Py_ref.map(Math.abs));
+
+  function drawArrow(ctx, fromX, fromY, toX, toY, color, width) {
+    const [fx, fy] = toPx(fromX, fromY);
+    const [tx, ty] = toPx(toX, toY);
+    const headLen = width > 2.5 ? 16 : 9;
+    const angle = Math.atan2(ty - fy, tx - fx);
+
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = width;
+
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.lineTo(tx, ty);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(tx - headLen * Math.cos(angle - Math.PI / 6), ty - headLen * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(tx - headLen * Math.cos(angle + Math.PI / 6), ty - headLen * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function polyPath(ctx, pts) {
+    ctx.beginPath();
+    pts.forEach(([x, y], i) => {
+      const [px, py] = toPx(x, y);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.closePath();
+  }
+
+  function drawHatchedPolygon(ctx, pts) {
+    polyPath(ctx, pts);
+    ctx.fillStyle = "#e8e8e8";
+    ctx.fill();
+
+    ctx.save();
+    polyPath(ctx, pts);
+    ctx.clip();
+
+    ctx.strokeStyle = "#bbbbbb";
+    ctx.lineWidth = 1;
+    const step = 10;
+    for (let d = -H; d < W + H; d += step) {
+      ctx.beginPath();
+      ctx.moveTo(d, 0);
+      ctx.lineTo(d + H, H);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 1;
+    polyPath(ctx, pts);
+    ctx.stroke();
+  }
+
+  function drawBaseScene(ctx, x, y, X_extent, Y_extent) {
+    ctx.clearRect(0, 0, W, H);
+
+    // -------- Bank/ground: curve -> floor right -> right wall -> back --------
+    const bankPts = [];
+    for (let i = 0; i < x.length; i++) bankPts.push([x[i], y[i]]);
+    bankPts.push([X_extent + PAD_BANK, -Y_extent]);
+    bankPts.push([X_extent + PAD_BANK, 0]);
+    drawHatchedPolygon(ctx, bankPts);
+
+    // -------- Water: left of the curve --------
+    const waterPts = [[-PAD_WATER, 0], [X_extent, 0]];
+    for (let i = 0; i < x.length; i++) waterPts.push([x[i], y[i]]);
+    waterPts.push([-PAD_WATER, -Y_extent]);
+
+    polyPath(ctx, waterPts);
+    ctx.fillStyle = "#cfe8f7";
+    ctx.fill();
+
+    // -------- Free surface + curve outline --------
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const [fx0, fy0] = toPx(-PAD_WATER, 0);
+    const [fx1, fy1] = toPx(X_extent, 0);
+    ctx.moveTo(fx0, fy0);
+    ctx.lineTo(fx1, fy1);
+    ctx.stroke();
+
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    x.forEach((xi, i) => {
+      const [px, py] = toPx(xi, y[i]);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+
+    // -------- Labels: centered on the water surface width --------
+    const waterCenterX = (-PAD_WATER + X_extent) / 2;
+
+    ctx.font = "13px -apple-system, sans-serif";
+    ctx.textAlign = "center";
+
+    const [atx, aty] = toPx(waterCenterX, 0.3);
+    ctx.fillStyle = "#222";
+    ctx.fillText("Atmosphere", atx, aty);
+
+    const [wtx, wty] = toPx(waterCenterX, -0.35);
+    ctx.fillStyle = "#0b6fa4";
+    ctx.fillText("Water", wtx, wty);
+  }
+
+  function drawInfoBox(ctx, lines) {
+    ctx.font = "13px -apple-system, sans-serif";
+    const boxW = 260, boxH = 18 + lines.length * 18;
+    // Bottom-left corner, out of the way of the centered water/atmosphere labels
+    const boxX = 14, boxY = H - boxH - 14;
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.fillRect(boxX, boxY, boxW, boxH);
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+    ctx.fillStyle = "#111";
+    ctx.textAlign = "left";
+    lines.forEach((line, i) => {
+      ctx.fillText(line, boxX + 10, boxY + 20 + i * 18);
+    });
+  }
+
+  function render(Y_extent) {
+    const X_extent = X_FIXED;
+    const { x, y, nx, ny } = computeCurve(X_extent, Y_extent, nPoints);
+
+    const depth = y.map(v => -v);
+    const P = depth.map(d => rho * g * d);
+    const Px = P.map((p, i) => p * nx[i]);
+    const Py = P.map((p, i) => p * ny[i]);
+
+    // ---- Integrate along the arc for resultant force ----
+    let Fx = 0, Fy = 0;
+    for (let i = 0; i < x.length - 1; i++) {
+      const ds = Math.hypot(x[i + 1] - x[i], y[i + 1] - y[i]);
+      const Pmid = (P[i] + P[i + 1]) / 2;
+      const nxMid = (nx[i] + nx[i + 1]) / 2;
+      const nyMid = (ny[i] + ny[i + 1]) / 2;
+      Fx += Pmid * nxMid * ds * plateWidth;
+      Fy += Pmid * nyMid * ds * plateWidth;
+    }
+    const F = Math.hypot(Fx, Fy);
+    const angleF = (Math.atan2(Fy, Fx) * 180) / Math.PI;
+
+    // ================= Magnitude panel =================
+    drawBaseScene(ctxMag, x, y, X_extent, Y_extent);
+
+    const scale = ARROW_SCALE / P_REFERENCE_MAX;
+    for (let i = 0; i < x.length; i++) {
+      const L = P[i] * scale;
+      const tailX = x[i] - nx[i] * L;
+      const tailY = y[i] - ny[i] * L;
+      drawArrow(ctxMag, tailX, tailY, x[i], y[i], "#18a558", 1.6);
+    }
+
+    drawInfoBox(ctxMag, [
+      "Pressure magnitude (green)",
+      `Max P (this depth) = ${(Math.max(...P) / 1000).toFixed(2)} kPa`,
+      `F = ${(F / 1000).toFixed(2)} kN`,
+      `Direction = ${angleF.toFixed(1)}° above horizontal`
+    ]);
+
+    // ================= Components panel =================
+    drawBaseScene(ctxComp, x, y, X_extent, Y_extent);
+
+    const scaleP = ARROW_SCALE / COMPONENT_REFERENCE_MAX;
+    for (let i = 0; i < x.length; i++) {
+      const Lx = Px[i] * scaleP;
+      drawArrow(ctxComp, x[i] - Lx, y[i], x[i], y[i], "#c00000", 1.4);
+      const Ly = Py[i] * scaleP;
+      drawArrow(ctxComp, x[i], y[i] - Ly, x[i], y[i], "#0050c0", 1.4);
+    }
+
+    drawInfoBox(ctxComp, [
+      "Px (red), Py (blue)",
+      `Fx = ${(Fx / 1000).toFixed(2)} kN`,
+      `Fy = ${(Fy / 1000).toFixed(2)} kN`
+    ]);
+  }
+
+  function update() {
+    const Y = parseFloat(ySlider.value);
+    yLabel.textContent = Y.toFixed(2) + " m";
+    render(Y);
+  }
+
+  ySlider.addEventListener("input", update);
+  update();
+})();
+</script>
