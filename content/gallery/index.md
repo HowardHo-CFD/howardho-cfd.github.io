@@ -12,7 +12,6 @@ gallery_media_1:
   - src: "/img/gallery/cylinder-rotating-iso.mp4"    # MP4 Animation / Video
     caption: "Rotating View of Time-Averaged Circular Cylinder at Re_D=3,900: Baseline (Left) vs. Actuated with 9 Synthetic Jets (Right)." 
 
-
 gallery_media_2:
   - src: "/img/gallery/sja-quiescent.mp4"    # MP4 Animation / Video
     caption: "Synthetic Jet Actuators in Quiescent Flow: Laminar (Left) vs. Turbulent (Right)"   
@@ -20,8 +19,6 @@ gallery_media_2:
     caption: "Synthetic Jet in Boundary Layer Crossflow - Isometric View." 
   - src: "/img/gallery/sja-flat-plate-side.mp4"    # MP4 Animation / Video
     caption: "Synthetic Jet in Boundary Layer Crossflow - Side View."   
-
-
 
 gallery_media_3:
   - src: "/img/gallery/oil-churning.mp4"    # MP4 Animation / Video
