@@ -1,17 +1,21 @@
+{{ $paramName := .Get "param" | default "gallery_media" }}
+{{ $mediaList := index .Page.Params $paramName }}
+{{ $galleryID := printf "gallerySlides-%d" .Ordinal }}
+
 <style>
   .gallery-slider-wrap {
     position: relative;
     max-width: 750px;
-    margin: 24px auto;
+    margin: 4px auto 24px auto !important;
     overflow: hidden;
     border-radius: 12px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
-    background: transparent; /* Removes black border/fill on container */
+    background: transparent;
   }
 
   .gallery-slides {
     display: flex;
-    align-items: center; /* Centers items vertically without forcing black bars */
+    align-items: center;
     transition: transform 0.4s ease-in-out;
   }
 
@@ -29,9 +33,9 @@
   .gallery-slide img,
   .gallery-slide video {
     width: 100%;
-    height: auto; /* Lets height scale naturally based on true resolution */
+    height: auto;
     max-height: 520px;
-    object-fit: contain; /* Keeps 100% of video visible with zero cropping */
+    object-fit: contain;
     display: block;
     cursor: zoom-in;
     border-radius: 8px;
@@ -39,11 +43,11 @@
 
   .gallery-caption {
     width: 100%;
-    margin-top: -30px;       /* pulls caption up snug against the video */
-    background: #000000;    /* gray instead of black */
+    margin-top: -30px;
+    background: #000000;
     color: #fff;
     text-align: center;
-    padding: 6px 12px;      /* slightly less vertical padding */
+    padding: 6px 12px;
     font-size: 14px;
     box-sizing: border-box;
   }
@@ -71,7 +75,6 @@
   .prev-btn { left: 12px; }
   .next-btn { right: 12px; }
 
-  /* Lightbox Modal */
   .lightbox-modal {
     display: none;
     position: fixed;
@@ -121,9 +124,9 @@
 </style>
 
 <div class="gallery-slider-wrap">
-  <button class="slider-btn prev-btn" onclick="prevGallerySlide()">&#10094;</button>
-  <div class="gallery-slides" id="gallerySlides">
-    {{ range .Page.Params.gallery_media }}
+  <button class="slider-btn prev-btn" onclick="prevGallerySlide('{{ $galleryID }}')">&#10094;</button>
+  <div class="gallery-slides" id="{{ $galleryID }}">
+    {{ range $mediaList }}
       {{ $src := "" }}
       {{ $caption := "" }}
       {{ if reflect.IsMap . }}
@@ -150,10 +153,9 @@
       </div>
     {{ end }}
   </div>
-  <button class="slider-btn next-btn" onclick="nextGallerySlide()">&#10095;</button>
+  <button class="slider-btn next-btn" onclick="nextGallerySlide('{{ $galleryID }}')">&#10095;</button>
 </div>
 
-<!-- Lightbox Modal -->
 <div id="lightbox" class="lightbox-modal" onclick="closeLightbox(event)">
   <span class="lightbox-close" onclick="closeLightbox(event)">&times;</span>
   <div class="lightbox-content-wrap">
@@ -164,23 +166,32 @@
 
 <script>
 (function() {
-  let currentIndex = 0;
-  const slidesContainer = document.getElementById('gallerySlides');
+  // Tracks current slide index per-gallery, keyed by gallery element ID
+  window.__galleryState = window.__galleryState || {};
 
-  window.showGallerySlide = function(index) {
+  window.showGallerySlide = function(galleryID, index) {
+    const slidesContainer = document.getElementById(galleryID);
     if (!slidesContainer) return;
     const totalSlides = slidesContainer.children.length;
     if (totalSlides === 0) return;
 
-    if (index >= totalSlides) currentIndex = 0;
-    else if (index < 0) currentIndex = totalSlides - 1;
-    else currentIndex = index;
+    let newIndex = index;
+    if (newIndex >= totalSlides) newIndex = 0;
+    else if (newIndex < 0) newIndex = totalSlides - 1;
 
-    slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+    window.__galleryState[galleryID] = newIndex;
+    slidesContainer.style.transform = `translateX(-${newIndex * 100}%)`;
   };
 
-  window.nextGallerySlide = function() { showGallerySlide(currentIndex + 1); };
-  window.prevGallerySlide = function() { showGallerySlide(currentIndex - 1); };
+  window.nextGallerySlide = function(galleryID) {
+    const current = window.__galleryState[galleryID] || 0;
+    showGallerySlide(galleryID, current + 1);
+  };
+
+  window.prevGallerySlide = function(galleryID) {
+    const current = window.__galleryState[galleryID] || 0;
+    showGallerySlide(galleryID, current - 1);
+  };
 
   window.openLightbox = function(src, type, caption) {
     const lightbox = document.getElementById('lightbox');

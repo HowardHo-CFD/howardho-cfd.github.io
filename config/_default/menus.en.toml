@@ -9,14 +9,21 @@ pageRef = "about"
 weight = 10
 
 [[main]]
-name = "Publications"
-pageRef = "publications"
+name = "Research"
+pageRef = "research"
 weight = 20
 
-#[[main]]
-#name = "Projects"
-#pageRef = "projects"
-#weight = 30
+[[main]]
+  parent = "Research"
+  name = "Publications"
+  pageRef = "research/publications"
+  weight = 10
+
+[[main]]
+  parent = "Research"
+  name = "Projects"
+  pageRef = "research/projects"
+  weight = 20
 
 [[main]]
 name = "Teaching"
@@ -36,7 +43,7 @@ weight = 40
   weight = 3
 
 [[main]]
-name = "CFD Gallery"
+name = "Fluids Gallery"
 pageRef = "gallery"
 weight = 50
 

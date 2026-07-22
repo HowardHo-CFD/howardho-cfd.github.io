@@ -1,5 +1,5 @@
 colorScheme = "noir" #"congo"
-enableSearch = true
+enableSearch = false
 enableCodeCopy = true
 defaultAppearance = "dark" # Options: "light", "dark", "system"
 autoSwitchAppearance = false

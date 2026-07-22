@@ -58,9 +58,9 @@ At the University of Toronto, he led a research project investigating turbulence
 - Fluid Mechanics 
 - Dynamics
 - Computational Fluid Dynamics (CFD)
-- Heat Ventilations and Air Conditioning (HVAC)
+- Heating Ventilation and Air Conditioning (HVAC)
 - Neural Networks (NN)
-- Engineering Communication
+- Engineering Communications
 
 </div>
 

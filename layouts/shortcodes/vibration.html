@@ -1,0 +1,316 @@
+<style>
+  #dv-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    color: #111111;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin: 1.5rem 0;
+  }
+  #dv-wrap canvas {
+    max-width: 90%;
+    height: auto;
+    border-radius: 8px;
+    background-color: #ffffff;
+  }
+  #dv-controls {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dv-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .dv-row label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333333;
+    white-space: nowrap;
+    width: 110px;
+  }
+  .dv-row input[type="range"] {
+    flex: 1;
+  }
+  .dv-row .dv-val {
+    font-variant-numeric: tabular-nums;
+    font-size: 15px;
+    font-weight: 600;
+    color: #333333;
+    min-width: 70px;
+    text-align: right;
+  }
+  #dv-reset {
+    margin-top: 6px;
+    align-self: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 6px 16px;
+    cursor: pointer;
+  }
+  #dv-reset:hover {
+    background: #e4e4e4;
+  }
+</style>
+
+<div id="dv-wrap">
+  <canvas id="dv-canvas" width="1000" height="500"></canvas>
+  <div id="dv-controls">
+    <div class="dv-row">
+      <label for="dv-mSlider">Mass (kg)</label>
+      <input type="range" id="dv-mSlider" min="0.5" max="10" step="0.1" value="3.0">
+      <span id="dv-mValue" class="dv-val">3.0 kg</span>
+    </div>
+    <div class="dv-row">
+      <label for="dv-kSlider">Stiffness k (N/m)</label>
+      <input type="range" id="dv-kSlider" min="10" max="300" step="1" value="98">
+      <span id="dv-kValue" class="dv-val">98 N/m</span>
+    </div>
+    <div class="dv-row">
+      <label for="dv-cSlider">Damping c (kg/s)</label>
+      <input type="range" id="dv-cSlider" min="0" max="50" step="0.5" value="0">
+      <span id="dv-cValue" class="dv-val">0.0 kg/s</span>
+    </div>
+    <button id="dv-reset" type="button">Reset simulation</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  const canvas = document.getElementById("dv-canvas");
+  const ctx = canvas.getContext("2d");
+
+  const mSlider = document.getElementById("dv-mSlider");
+  const kSlider = document.getElementById("dv-kSlider");
+  const cSlider = document.getElementById("dv-cSlider");
+  const mValue = document.getElementById("dv-mValue");
+  const kValue = document.getElementById("dv-kValue");
+  const cValue = document.getElementById("dv-cValue");
+  const resetBtn = document.getElementById("dv-reset");
+
+  // ---- Fixed constants (mirrors the original Python model) ----
+  const L0 = 1.0;     // natural spring length
+  const x0 = 0.845;   // initial displacement
+  const dtSub = 0.001; // integration substep, matches original dt
+  const targetFps = 60; // was referenced but never defined in the original script
+
+  // World coordinate space
+  const worldXMin = -0.25, worldXMax = 2.5;
+  const worldYMin = -0.2, worldYMax = 0.2;
+
+  const W = canvas.width, H = canvas.height;
+  const pad = 30;
+  const scale = Math.min((W - 2 * pad) / (worldXMax - worldXMin), (H - 2 * pad) / (worldYMax - worldYMin));
+  const offsetX = pad + ((W - 2 * pad) - scale * (worldXMax - worldXMin)) / 2;
+  const offsetY = pad + ((H - 2 * pad) - scale * (worldYMax - worldYMin)) / 2;
+
+  function toPx(x, y) {
+    const px = offsetX + (x - worldXMin) * scale;
+    const py = H - offsetY - (y - worldYMin) * scale;
+    return [px, py];
+  }
+
+  function drawArrow(fromX, fromY, toX, toY, color, lineWidth, headLen) {
+    const [fx, fy] = toPx(fromX, fromY);
+    const [tx, ty] = toPx(toX, toY);
+    const angle = Math.atan2(ty - fy, tx - fx);
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = lineWidth;
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.lineTo(tx, ty);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(tx - headLen * Math.cos(angle - Math.PI / 6), ty - headLen * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(tx - headLen * Math.cos(angle + Math.PI / 6), ty - headLen * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Zigzag spring from the wall (x=0) to the block contact point
+  function drawSpring(contactX) {
+    const coils = 14;
+    const ampWorld = 0.045;
+    const [startPx, startPy] = toPx(0, 0);
+    const [endPx, endPy] = toPx(contactX, 0);
+
+    ctx.strokeStyle = "green";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(startPx, startPy);
+    const segLen = (contactX - 0) / (coils + 1);
+    for (let i = 1; i <= coils; i++) {
+      const xw = i * segLen;
+      const yw = (i % 2 === 0 ? 1 : -1) * ampWorld;
+      const [px, py] = toPx(xw, yw);
+      ctx.lineTo(px, py);
+    }
+    ctx.lineTo(endPx, endPy);
+    ctx.stroke();
+  }
+
+  let x = x0, v = 0;
+  let lastTime = null;
+
+  function currentParams() {
+    return {
+      m: parseFloat(mSlider.value),
+      k: parseFloat(kSlider.value),
+      c: parseFloat(cSlider.value)
+    };
+  }
+
+  function step(dt) {
+    const { m, k, c } = currentParams();
+    // Semi-implicit (symplectic) Euler, matching the original loop exactly
+    const a = (-k * x - c * v) / m;
+    v = v + a * dt;
+    x = x + v * dt;
+  }
+
+  function render() {
+    const { m, k, c } = currentParams();
+    const contactX = x + L0;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, W, H);
+
+    // Wall
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    let [p1, p2] = [toPx(0, -0.2), toPx(0, 0.2)];
+    ctx.moveTo(p1[0], p1[1]);
+    ctx.lineTo(p2[0], p2[1]);
+    ctx.stroke();
+
+    // Ground
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    [p1, p2] = [toPx(-0.25, -0.15), toPx(2.5, -0.15)];
+    ctx.moveTo(p1[0], p1[1]);
+    ctx.lineTo(p2[0], p2[1]);
+    ctx.stroke();
+
+    // Equilibrium reference line
+    ctx.strokeStyle = "grey";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 5]);
+    ctx.beginPath();
+    [p1, p2] = [toPx(L0, -0.2), toPx(L0, 0.2)];
+    ctx.moveTo(p1[0], p1[1]);
+    ctx.lineTo(p2[0], p2[1]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.font = "12px -apple-system, sans-serif";
+    ctx.fillStyle = "grey";
+    ctx.textAlign = "center";
+    let [tx, ty] = toPx(L0, -0.2);
+    ctx.fillText("x_eq", tx, ty + 14);
+
+    // Spring
+    drawSpring(contactX);
+
+    // Damper (schematic line, matching the original's simplified representation)
+    ctx.strokeStyle = "#E69F00";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    [p1, p2] = [toPx(0, -0.05), toPx(contactX, -0.05)];
+    ctx.moveTo(p1[0], p1[1]);
+    ctx.lineTo(p2[0], p2[1]);
+    ctx.stroke();
+
+    // Block
+    const [bx, by] = toPx(contactX - 0.1, 0.15);
+    const blockW = 0.2 * scale;
+    const blockH = 0.25 * scale;
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(bx, by, blockW, blockH);
+
+    // Forces
+    const springForce = -k * x;
+    const dampingForce = -c * v;
+    const forceScale = 0.02; // matches the original quiver scale directly (world units per Newton)
+
+    drawArrow(contactX, 0, contactX + springForce * forceScale, 0, "red", 2.5, 10);
+    drawArrow(contactX, -0.05, contactX + dampingForce * forceScale, -0.05, "brown", 2.5, 10);
+
+    ctx.font = "13px -apple-system, sans-serif";
+    ctx.fillStyle = "red";
+    ctx.textAlign = "center";
+    [tx, ty] = toPx(2.0, 0.1);
+    ctx.fillText(`F_s = ${springForce.toFixed(1)} N`, tx, ty);
+
+    ctx.fillStyle = "brown";
+    [tx, ty] = toPx(2.0, -0.1);
+    ctx.fillText(`F_c = ${dampingForce.toFixed(1)} N`, tx, ty);
+
+    // Title / damping state
+    const cCritical = 2 * Math.sqrt(k * m);
+    const gamma = cCritical > 0 ? c / cCritical : 0;
+    let condition = "Underdamped";
+    if (c === cCritical) condition = "Critically Damped";
+    else if (c > cCritical) condition = "Overdamped";
+
+    ctx.font = "bold 16px -apple-system, sans-serif";
+    ctx.fillStyle = "#111";
+    ctx.textAlign = "center";
+    ctx.fillText(`Damped Vibration — ζ = ${gamma.toFixed(2)} (${condition})`, W / 2, 24);
+  }
+
+  function loop(now) {
+    if (lastTime === null) lastTime = now;
+    let elapsed = (now - lastTime) / 1000;
+    lastTime = now;
+
+    // Clamp to avoid a huge catch-up jump if the tab was inactive
+    elapsed = Math.min(elapsed, 0.05);
+
+    let remaining = elapsed;
+    while (remaining > 0) {
+      const dt = Math.min(dtSub, remaining);
+      step(dt);
+      remaining -= dt;
+    }
+
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  function updateLabels() {
+    mValue.textContent = parseFloat(mSlider.value).toFixed(1) + " kg";
+    kValue.textContent = parseFloat(kSlider.value).toFixed(0) + " N/m";
+    cValue.textContent = parseFloat(cSlider.value).toFixed(1) + " kg/s";
+  }
+
+  mSlider.addEventListener("input", updateLabels);
+  kSlider.addEventListener("input", updateLabels);
+  cSlider.addEventListener("input", updateLabels);
+
+  resetBtn.addEventListener("click", function () {
+    x = x0;
+    v = 0;
+  });
+
+  updateLabels();
+  render();
+  requestAnimationFrame(loop);
+})();
+</script>
