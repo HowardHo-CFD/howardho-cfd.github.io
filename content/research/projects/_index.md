@@ -89,6 +89,23 @@ showWordCount: false
 
 ---
 
+<!-- ENGINEERING EDUCATION PROJECT -->
+<div class="project-row">
+<div class="project-img">
+<img src="/img/me-teaching.jpg" alt="Engineering Education Case Study" onclick="openMediaLightbox(this)">
+</div>
+<div class="project-info">
+<span class="project-degree">University of Toronto (2024 - 2026)</span>
+<h3>Learning Analytics & Forum Data to Target Student Support</h3>
+<div class="project-thesis"> Using Forum and Assessment Analytics to Target Student Support Needs in Engineering Dynamics</div>
+<div class="btn-row">
+{{< button href="../../files/Piazza-poster.pdf" target="_blank" >}}📄 Poster (PDF){{< /button >}}
+</div>
+</div>
+</div>
+
+---
+
 <!-- MASC PROJECT -->
 <div class="project-row">
 <div class="project-img">
