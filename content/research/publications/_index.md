@@ -69,7 +69,7 @@ summary: " "
 ### Symposiums & Submitted Reports
 
 <ol reversed>
-  <li><b>Ho, H.H.</b> (2026). <a href="/files/THE_Chicken_Report.pdf" target="_blank" rel="noopener noreferrer">THE Chicken Rrport</a>. <i>Technical Report Submitted to the Turbulence Research Lab</i>, Toronto, ON, Canada.</li>
+  <li><b>Ho, H.H.</b> (2026). <a href="/files/THE_Chicken_Report.pdf" target="_blank" rel="noopener noreferrer">THE Chicken Report</a>. <i>Technical Report Submitted to the Turbulence Research Lab</i>, Toronto, ON, Canada.</li>
 
   <li><b>Ho, H.H.</b>, Essel, E.E., and Sullivan, P.E. (2026). Large Eddy Simulation of Active Flow Control on a Circular Cylinder. <i>MIE Graduate Research Symposium</i>, Toronto, ON, Canada.</li>
 

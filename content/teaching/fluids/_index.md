@@ -42,6 +42,9 @@ summary: "
 - [Cone Viscometer Velocity Profile Simulator](interactive-tools/cone-viscometer/)
 
 ## Slides and Handouts :book:
+- [Sampled Slides - Surface Tension & Viscometer](../../files/fluids/Tutorial-2-slides.pdf)
+- [Sample Handotus - Surface Tension & Viscometer](../../files/fluids/Tutorial-2-handout.pdf)
+<!-- - [Google Drive](https://drive.google.com/drive/folders/1UJttktjh7cqhusC3yaC5t-AoLlOOup7s?usp=sharing) -->
 
-- [Google Drive](https://drive.google.com/drive/folders/1UJttktjh7cqhusC3yaC5t-AoLlOOup7s?usp=sharing)
-
+## Class Signing Sheet ✍🏻
+- [Class of 2024 - Teaching Assistant](../../files/fluids/MIE312-2024.jpg)

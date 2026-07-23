@@ -40,11 +40,16 @@ summary: "
 
 ## Interactive Tools :zap:
 
-- [Vibration Simulator](interactive-tools/vibration/)
+- [Damped Vibration Simulator](interactive-tools/vibration/)
 
 
 ## Slides and Handouts :book:
-Example Slides - .
-Example Handout - 
 
+- [Sampled Slides - Projectile Motion (Preview Version)](../../files/fluids/Preview-Lecture-4-Projectile-Motions.pdf)
+- [Sample Handotus - Projectile Motion (Annotated Version)](../../files/fluids/Annotated-Lecture-4-Projectile-Motions.pdf)
 
+<!-- - [Google Drive](https://drive.google.com/drive/folders/1UJttktjh7cqhusC3yaC5t-AoLlOOup7s?usp=sharing) -->
+
+## Class Signing Sheet ✍🏻
+- [Class of 2024 - Course Instructor](../../files/fluids/MIE100-2024.jpg)
+- [Class of 2025 - Teaching Assistant](../../files/fluids/MIE100-2025.jpg)
