@@ -6,6 +6,13 @@ showReadingTime: false
 showWordCount: false
 ---
 
+<style>
+  /* Reduces top margin/padding on the main container or page title */
+  main, .page-header, .post-header, h1 {
+    margin-top: -2.5rem !important;
+  }
+</style>
+
 {{< img-fit src="/img/me-teaching.jpg" alt="Howard Ho Teaching" max="850px" >}}
 
 <div style="text-align: justify;">

@@ -7,6 +7,13 @@ showWordCount: false
 layoutBackgroundBlur: true 
 ---
 
+<style>
+  /* Reduces top margin/padding on the main container or page title */
+  main, .page-header, .post-header, h1 {
+    margin-top: -2.5rem !important;
+  }
+</style>
+
 <div style="text-align: center;">
 
 {{< figure src="/img/my-photo.jpg" width="500" alt="Howard Ho" class="mx-auto" >}}
