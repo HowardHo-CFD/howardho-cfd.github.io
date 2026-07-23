@@ -18,7 +18,7 @@ layoutBackgroundBlur: true
 
 {{< figure src="/img/my-photo.jpg" width="500" alt="Howard Ho" class="mx-auto" >}}
 
-<div style="height: 1rem;"></div>
+<div style="height: 2rem;"></div>
 
 # Dr. Howard Haonan Ho
 
