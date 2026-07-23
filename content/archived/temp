@@ -1,11 +1,3 @@
----
-title: "Posts"
-layout: "background"
-heroImage: "/img/backgrounds/fluids-bg-cropped.jpg"
-layoutBackgroundBlur: true 
----
-
-
 
 <style>
   /* Hide Blowfish default page title header */

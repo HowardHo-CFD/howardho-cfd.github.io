@@ -68,7 +68,7 @@ Dr. Howard Haonan Ho's research focuses on computational fluid dyanmcis, Active 
   </a>
 
   <a href="projects/" class="research-card">
-    <span class="card-label">Fluid Dynamics </span>
+    <span class="card-label">Fluid Mechanics </span>
     <span class="card-title">Projects</span>
   </a>
 

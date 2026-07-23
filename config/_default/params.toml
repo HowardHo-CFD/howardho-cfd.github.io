@@ -1,4 +1,4 @@
-colorScheme = "noir" #"congo"
+colorScheme = "noir" #"stale/noir/blowfish/congo"
 enableSearch = false
 enableCodeCopy = true
 defaultAppearance = "dark" # Options: "light", "dark", "system"
@@ -47,15 +47,17 @@ mainSections = ["posts"]
   showWordCount = true
   showSummary = true
   math = true
+  layoutBackgroundBlur = true 
   #sharingLinks = ["linkedin", "twitter", "whatsapp", "pinterest", "reddit", "facebook", "email"]
-
+   
 [list]
   showHero = true
   heroStyle = "background"
+  layoutBackgroundBlur = true  
   layoutBackgroundHeaderSpace = false
   showBreadcrumbs = false
   showSummary = true
-  showTableOfContents = false
+  showTableOfContents = true
   showCards = true
   groupByYear = false
   cardView = true

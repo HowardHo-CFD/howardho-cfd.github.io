@@ -4,6 +4,7 @@ layout: "simple"
 showDate: false
 showReadingTime: false
 showWordCount: false
+layoutBackgroundBlur: true 
 ---
 
 <div style="text-align: center;">

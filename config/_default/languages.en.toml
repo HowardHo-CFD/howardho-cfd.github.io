@@ -14,7 +14,7 @@ title = "Dr. Howard Haonan Ho"
 [params.author]
   name = "Dr. Howard Haonan Ho"
   image = "img/my-photo.jpg"
-  #headline = "This is my website with my links"
+  # headline = "This is my website with my links"
   # bio = "A little bit about you"
    links = [
      { google-scholar = "https://scholar.google.com/citations?user=LVaDiJ0AAAAJ&hl=en" },

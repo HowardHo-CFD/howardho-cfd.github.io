@@ -1,6 +1,5 @@
 ---
 title: "Gallery"
-layout: "simple"
 showDate: false
 showReadingTime: false
 showWordCount: false
