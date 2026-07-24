@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Droplet Contact Angle & Surface Tension Forces</title>
+<style>
+  #droplet-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    color: #111111;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin: 1.5rem auto;
+    max-width: 680px;
+  }
+  #droplet-wrap canvas {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    background-color: #ffffff;
+  }
+  #droplet-controls {
+    width: 100%;
+    max-width: 480px;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  #droplet-controls label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333333;
+    white-space: nowrap;
+    width: 100px;
+  }
+  #droplet-controls input[type="range"] {
+    flex: 1;
+  }
+  #droplet-controls .val {
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333333;
+    min-width: 50px;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<div id="droplet-wrap">
+  <canvas id="dropletCanvas" width="600" height="420"></canvas>
+  <div id="droplet-controls">
+    <label for="thetaSlider">Contact Angle θ</label>
+    <input type="range" id="thetaSlider" min="5" max="175" step="1" value="30">
+    <span id="thetaValue" class="val">30°</span>
+  </div>
+</div>
+
+<script>
+(function () {
+  const canvas = document.getElementById("dropletCanvas");
+  const ctx = canvas.getContext("2d");
+  const thetaSlider = document.getElementById("thetaSlider");
+  const thetaLabel = document.getElementById("thetaValue");
+
+  // ---- World Limits ----
+  const worldXMin = -1.5, worldXMax = 1.5;
+  const worldYMin = -0.4, worldYMax = 2.0;
+
+  const W = canvas.width;
+  const H = canvas.height;
+
+  function toPx(x, y) {
+    const px = ((x - worldXMin) / (worldXMax - worldXMin)) * W;
+    const py = H - ((y - worldYMin) / (worldYMax - worldYMin)) * H;
+    return [px, py];
+  }
+
+  function drawArrow(x0, y0, dx, dy, color, width = 2, headLen = 10) {
+    const [fx, fy] = toPx(x0, y0);
+    const [tx, ty] = toPx(x0 + dx, y0 + dy);
+    const angle = Math.atan2(ty - fy, tx - fx);
+
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = width;
+
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.lineTo(tx, ty);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(tx - headLen * Math.cos(angle - Math.PI / 6), ty - headLen * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(tx - headLen * Math.cos(angle + Math.PI / 6), ty - headLen * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function render(thetaDeg) {
+    const R = 1.0;
+    const theta = (thetaDeg * Math.PI) / 180;
+
+    // Geometry calculations
+    const yc = -R * Math.cos(theta);
+    const xc = R * Math.sin(theta);
+
+    ctx.clearRect(0, 0, W, H);
+
+    // ---- 1. Droplet Polygon ----
+    const numArcPts = 300;
+    const polyX = [-xc];
+    const polyY = [0];
+
+    for (let i = 0; i <= numArcPts; i++) {
+      const phi = (Math.PI / 2 - theta) + (i / numArcPts) * (2 * theta);
+      polyX.push(R * Math.cos(phi));
+      polyY.push(yc + R * Math.sin(phi));
+    }
+    polyX.push(xc);
+    polyY.push(0);
+
+    ctx.beginPath();
+    const [p0x, p0y] = toPx(polyX[0], polyY[0]);
+    ctx.moveTo(p0x, p0y);
+    for (let i = 1; i < polyX.length; i++) {
+      const [px, py] = toPx(polyX[i], polyY[i]);
+      ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+
+    ctx.fillStyle = "rgba(135, 206, 250, 0.85)"; // lightskyblue
+    ctx.fill();
+    ctx.strokeStyle = "#4682b4"; // steelblue
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // ---- 2. Substrate Surface Line ----
+    ctx.strokeStyle = "gray";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    const [s0x, s0y] = toPx(-2, 0);
+    const [s1x, s1y] = toPx(2, 0);
+    ctx.moveTo(s0x, s0y);
+    ctx.lineTo(s1x, s1y);
+    ctx.stroke();
+
+    // ---- 3. Contact Angle Annotations ----
+    const rArc = 0.18;
+    const L = 0.22;
+
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 1.5;
+
+    // Left Side Tangents & Arc
+    ctx.beginPath();
+    let [t0x, t0y] = toPx(-xc, 0);
+    let [t1x, t1y] = toPx(-xc + L, 0);
+    ctx.moveTo(t0x, t0y);
+    ctx.lineTo(t1x, t1y);
+
+    [t1x, t1y] = toPx(-xc + L * Math.cos(theta), L * Math.sin(theta));
+    ctx.moveTo(t0x, t0y);
+    ctx.lineTo(t1x, t1y);
+    ctx.stroke();
+
+    ctx.beginPath();
+    const stepsArc = 40;
+    for (let i = 0; i <= stepsArc; i++) {
+      const phi = (i / stepsArc) * theta;
+      const [apx, apy] = toPx(-xc + rArc * Math.cos(phi), rArc * Math.sin(phi));
+      if (i === 0) ctx.moveTo(apx, apy);
+      else ctx.lineTo(apx, apy);
+    }
+    ctx.stroke();
+
+    const [lThX, lThY] = toPx(-xc + 0.12, 0.15);
+    ctx.font = "italic 16px serif";
+    ctx.fillStyle = "#000000";
+    ctx.textAlign = "left";
+    ctx.fillText("θ", lThX, lThY);
+
+    // Right Side Tangents & Arc
+    ctx.beginPath();
+    [t0x, t0y] = toPx(xc, 0);
+    [t1x, t1y] = toPx(xc - L, 0);
+    ctx.moveTo(t0x, t0y);
+    ctx.lineTo(t1x, t1y);
+
+    [t1x, t1y] = toPx(xc - L * Math.cos(theta), L * Math.sin(theta));
+    ctx.moveTo(t0x, t0y);
+    ctx.lineTo(t1x, t1y);
+    ctx.stroke();
+
+    ctx.beginPath();
+    for (let i = 0; i <= stepsArc; i++) {
+      const phi = (Math.PI - theta) + (i / stepsArc) * theta;
+      const [apx, apy] = toPx(xc + rArc * Math.cos(phi), rArc * Math.sin(phi));
+      if (i === 0) ctx.moveTo(apx, apy);
+      else ctx.lineTo(apx, apy);
+    }
+    ctx.stroke();
+
+    const [rThX, rThY] = toPx(xc - 0.18, 0.175);
+    ctx.font = "italic 16px serif";
+    ctx.fillStyle = "#000000";
+    ctx.textAlign = "left";
+    ctx.fillText("θ", rThX, rThY);
+
+    // ---- 4. Surface Tension Vectors (Young's Equation) ----
+    const A = 0.45;
+    const gsv_color = "#2ca02c"; // Solid-Gas (Green)
+    const gsl_color = "#d62728"; // Solid-Liquid (Red)
+    const glv_color = "#7f0fbf"; // Liquid-Gas (Purple)
+
+    // RIGHT Contact Point
+    drawArrow(xc, 0, A, 0, gsv_color, 2.2);
+    drawArrow(xc, 0, -A, 0, gsl_color, 2.2);
+    drawArrow(xc, 0, -A * Math.cos(theta), A * Math.sin(theta), glv_color, 2.2);
+
+    // LEFT Contact Point (Mirrored)
+    drawArrow(-xc, 0, -A, 0, gsv_color, 2.2);
+    drawArrow(-xc, 0, A, 0, gsl_color, 2.2);
+    drawArrow(-xc, 0, A * Math.cos(theta), A * Math.sin(theta), glv_color, 2.2);
+
+    // ---- 5. Text Labels & State ----
+    let wetText = "Wetting";
+    if (thetaDeg > 90) wetText = "Non-wetting";
+    else if (thetaDeg === 90) wetText = "Neutral";
+
+    // Wetting State Text (Top Center)
+    const [wtx, wty] = toPx(0, 1.75);
+    ctx.font = "18px -apple-system, sans-serif";
+    ctx.fillStyle = "#111111";
+    ctx.textAlign = "center";
+    ctx.fillText(wetText, wtx, wty);
+
+    // Angle Readout Text (Top Right)
+    const [atx, aty] = toPx(0.8, 1.85);
+    ctx.font = "18px -apple-system, sans-serif";
+    ctx.fillStyle = "#111111";
+    ctx.textAlign = "left";
+    ctx.fillText(`θ = ${thetaDeg}°`, atx, aty);
+
+    // ---- 6. Legend (Upper Left) ----
+    const legX = 20, legY = 20, rowH = 22;
+    ctx.font = "14px -apple-system, sans-serif";
+    ctx.textAlign = "left";
+
+    const legendEntries = [
+      { color: gsv_color, label: "F_SG (Solid-Gas)" },
+      { color: gsl_color, label: "F_SL (Solid-Liquid)" },
+      { color: glv_color, label: "F_LG (Liquid-Gas)" }
+    ];
+
+    legendEntries.forEach((entry, i) => {
+      const yPos = legY + i * rowH;
+      ctx.strokeStyle = entry.color;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(legX, yPos - 4);
+      ctx.lineTo(legX + 20, yPos - 4);
+      ctx.stroke();
+
+      ctx.fillStyle = "#333333";
+      ctx.fillText(entry.label, legX + 28, yPos);
+    });
+  }
+
+  function update() {
+    const thetaVal = parseInt(thetaSlider.value, 10);
+    thetaLabel.textContent = thetaVal + "°";
+    render(thetaVal);
+  }
+
+  thetaSlider.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

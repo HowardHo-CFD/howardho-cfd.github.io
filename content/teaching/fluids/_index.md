@@ -40,6 +40,8 @@ summary: "
 - [Hydrostatic Pressure Simulator](interactive-tools/hydrostatic-pressure/)
 - [Curved Plate Pressure Simulator](interactive-tools/curved-plate-pressure/)
 - [Cone Viscometer Velocity Profile Simulator](interactive-tools/cone-viscometer/)
+- [Surface Tension Simulator - Droplet](interactive-tools/droplet/)
+- [Surface Tension Simulator - Capillary Tube](interactive-tools/capillary-tube/)
 
 ## Slides and Handout :book:
 - [Sample Slides - Drag Force](../../files/fluids/Drag-slides.pdf)

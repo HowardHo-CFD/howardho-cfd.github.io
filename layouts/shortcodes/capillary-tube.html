@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Capillary Action Visualization</title>
+<style>
+  #wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    color: #111111;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin: 1.5rem auto;
+    max-width: 1040px;
+  }
+  #wrap canvas {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    background-color: #ffffff;
+  }
+  #controls {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .control-row label {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    width: 100px;
+  }
+  .control-row input[type="range"], .control-row select {
+    flex: 1;
+  }
+  .control-row select {
+    padding: 4px 8px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+  }
+  .control-row .val {
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    color: #333;
+    min-width: 60px;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<div id="wrap">
+  <canvas id="canvas" width="750" height="450"></canvas>
+  <div id="controls">
+    <div class="control-row">
+      <label for="liquidSelect">Liquid</label>
+      <select id="liquidSelect">
+        <option value="Water" selected>Water (ρ=1000 kg/m³, σ=72.8 mN/m)</option>
+        <option value="Mercury">Mercury (ρ=13600 kg/m³, σ=485.0 mN/m)</option>
+      </select>
+    </div>
+    <div class="control-row">
+      <label for="thetaSlider">Contact Angle θ</label>
+      <input type="range" id="thetaSlider" min="0" max="179" step="1" value="20">
+      <span id="thetaValue" class="val">20°</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const thetaSlider = document.getElementById("thetaSlider");
+  const liquidSelect = document.getElementById("liquidSelect");
+  const thetaLabel = document.getElementById("thetaValue");
+
+  // ---- Constants & Model Props ----
+  const R_MM = 0.5; // Tube radius in mm
+  const R_SI = R_MM / 1000;
+  const g = 9.81;
+
+  const MATERIALS = {
+    'Water':   { rho: 1000,  sigma: 72.8 },
+    'Mercury': { rho: 13600, sigma: 485.0 }
+  };
+
+  // World bounds matching python setup
+  const worldXMin = -5.1, worldXMax = 4.9;
+  const worldYMin = -3.3, worldYMax = 7.5;
+  const XW = 1.2;
+  const X_MAX = 4.8;
+  const Y_BOTTOM = -3.0;
+  const Y_TOP = 6.5;
+
+  const W = canvas.width;
+  const H = canvas.height;
+
+  function toPx(x, y) {
+    const px = ((x - worldXMin) / (worldXMax - worldXMin)) * W;
+    const py = H - ((y - worldYMin) / (worldYMax - worldYMin)) * H;
+    return [px, py];
+  }
+
+  function drawArrow(ctx, fromX, fromY, toX, toY, color, width, headLen = 12) {
+    const [fx, fy] = toPx(fromX, fromY);
+    const [tx, ty] = toPx(toX, toY);
+    const angle = Math.atan2(ty - fy, tx - fx);
+
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = width;
+
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.lineTo(tx, ty);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(tx - headLen * Math.cos(angle - Math.PI / 6), ty - headLen * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(tx - headLen * Math.cos(angle + Math.PI / 6), ty - headLen * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function render(thetaDeg, liquidKey) {
+    const props = MATERIALS[liquidKey];
+    const theta = (thetaDeg * Math.PI) / 180;
+    const sig_SI = props.sigma / 1000;
+
+    // Physical capillary height calculation
+    const h = (2 * sig_SI * Math.cos(theta)) / (props.rho * g * R_SI);
+    const h_mm = h * 1000;
+
+    // Scaled visual height
+    let h_vis = h_mm / 8;
+    if (h_vis < -2.2) h_vis = -2.2;
+    if (h_vis > 4.2) h_vis = 4.2;
+
+    const y_rim = h_vis;
+    let dip = XW * Math.abs(Math.cos(theta));
+    if (dip > XW * 0.85) dip = XW * 0.85;
+
+    const sign = thetaDeg < 90 ? -1.0 : 1.0;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // ---- Polygon Liquid Mesh ----
+    const numSteps = 100;
+    const xs_tube = [];
+    const ys_tube = [];
+    for (let i = 0; i <= numSteps; i++) {
+      const x = -XW + (i / numSteps) * (2 * XW);
+      const y = y_rim + sign * dip * (1 - Math.pow(x / XW, 2));
+      xs_tube.push(x);
+      ys_tube.push(y);
+    }
+
+    const polyX = [-X_MAX, -XW, ...xs_tube, XW, X_MAX, X_MAX, -X_MAX];
+    const polyY = [0, 0, ...ys_tube, 0, 0, Y_BOTTOM, Y_BOTTOM];
+
+    ctx.beginPath();
+    const [p0x, p0y] = toPx(polyX[0], polyY[0]);
+    ctx.moveTo(p0x, p0y);
+    for (let i = 1; i < polyX.length; i++) {
+      const [px, py] = toPx(polyX[i], polyY[i]);
+      ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = liquidKey === 'Mercury' ? '#b0c4de' : '#87cefa';
+    ctx.fill();
+    ctx.strokeStyle = '#4682b4';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // ---- Tube Glass Walls ----
+    ctx.strokeStyle = '#8b4513';
+    ctx.lineWidth = 8;
+    ctx.lineCap = 'butt';
+
+    ctx.beginPath();
+    let [w1x, w1y] = toPx(-XW, Y_BOTTOM + 0.5);
+    let [w2x, w2y] = toPx(-XW, Y_TOP);
+    ctx.moveTo(w1x, w1y);
+    ctx.lineTo(w2x, w2y);
+    ctx.stroke();
+
+    ctx.beginPath();
+    [w1x, w1y] = toPx(XW, Y_BOTTOM + 0.5);
+    [w2x, w2y] = toPx(XW, Y_TOP);
+    ctx.moveTo(w1x, w1y);
+    ctx.lineTo(w2x, w2y);
+    ctx.stroke();
+
+    // ---- Reservoir Level (Dashed Gray) ----
+    ctx.strokeStyle = 'gray';
+    ctx.lineWidth = 1.3;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    const [rl0x, rl0y] = toPx(-X_MAX, 0);
+    const [rl1x, rl1y] = toPx(X_MAX, 0);
+    ctx.moveTo(rl0x, rl0y);
+    ctx.lineTo(rl1x, rl1y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.font = '12px -apple-system, sans-serif';
+    ctx.fillStyle = 'gray';
+    ctx.textAlign = 'right';
+    const [rtx, rty] = toPx(X_MAX - 0.05, 0.12);
+    ctx.fillText('reservoir level', rtx, rty);
+
+    // ---- Surface Tension Force Vectors (Purple) ----
+    const L = 1.0;
+    const labelOffsets = {
+      '-1': { ox: -0.35, oy: 0.15, align: 'right' },
+      '1': { ox: 0.35, oy: 0.15, align: 'left' }
+    };
+
+    [-1, 1].forEach((side) => {
+      const x0 = side * XW;
+      const y0 = y_rim;
+      const dx = side * L * Math.sin(theta);
+      const dy = L * Math.cos(theta);
+
+      drawArrow(ctx, x0, y0, x0 + dx, y0 + dy, '#800080', 2.5);
+
+      const offset = labelOffsets[side];
+      const [lx, ly] = toPx(x0 + dx + offset.ox, y0 + dy + offset.oy);
+      ctx.font = 'italic 16px serif';
+      ctx.fillStyle = '#800080';
+      ctx.textAlign = offset.align;
+      ctx.fillText('F_σ', lx, ly);
+    });
+
+    // ---- Theta Arc (Right Side) ----
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    const [dash0x, dash0y] = toPx(XW, y_rim);
+    const [dash1x, dash1y] = toPx(XW, y_rim + 0.5);
+    ctx.moveTo(dash0x, dash0y);
+    ctx.lineTo(dash1x, dash1y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    const arc_r = 0.3;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    const arcSteps = 30;
+    for (let i = 0; i <= arcSteps; i++) {
+      const a = (i / arcSteps) * theta;
+      const ax = XW + arc_r * Math.sin(a);
+      const ay = y_rim + arc_r * Math.cos(a);
+      const [apx, apy] = toPx(ax, ay);
+      if (i === 0) ctx.moveTo(apx, apy);
+      else ctx.lineTo(apx, apy);
+    }
+    ctx.stroke();
+
+    const [tax, tay] = toPx(XW + 0.65, y_rim + 0.45);
+    ctx.font = 'italic 16px serif';
+    ctx.fillStyle = '#000';
+    ctx.textAlign = 'left';
+    ctx.fillText('θ', tax, tay);
+
+    // ---- Force Vector γ·π·R²·h (Flips Upward for Negative h) ----
+    const DOWN_SHIFT = 1.5;
+    const ARROW_LEN = 1.0;
+    const tail_y = y_rim - sign * dip * 0.3 - DOWN_SHIFT;
+
+    let tip_y = h_mm >= 0 ? tail_y - ARROW_LEN : tail_y + ARROW_LEN;
+
+    if (tip_y < Y_BOTTOM + 0.2) tip_y = Y_BOTTOM + 0.2;
+    if (tip_y > Y_TOP - 0.2) tip_y = Y_TOP - 0.2;
+
+    drawArrow(ctx, 0, tail_y, 0, tip_y, '#d00000', 2.5);
+
+    const [flx, fly] = toPx(0, (tail_y + tip_y) / 2 - 0.85);
+    ctx.font = 'italic 15px serif';
+    ctx.fillStyle = '#d00000';
+    ctx.textAlign = 'center';
+    ctx.fillText('γ π R² h', flx, fly);
+
+    // ---- Height Vector Bracket (h_vec) ----
+    drawArrow(ctx, -XW - 0.4, 0, -XW - 0.4, y_rim, '#000000', 1.2, 8);
+    drawArrow(ctx, -XW - 0.4, y_rim, -XW - 0.4, 0, '#000000', 1.2, 8);
+
+    const [hbx, hby] = toPx(-XW - 0.75, y_rim / 2);
+    ctx.font = 'bold italic 16px serif';
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'center';
+    ctx.fillText('h', hbx, hby);
+
+    // ---- Information Readout Box ----
+    const infoLines = [
+      `θ = ${thetaDeg}°`,
+      `Liquid: ${liquidKey} (ρ=${props.rho} kg/m³, σ=${props.sigma.toFixed(1)} mN/m)`,
+      `Vapor: Air   Solid: Glass`,
+      `R = ${R_MM.toFixed(2)} mm (fixed)`,
+      `h = ${h_mm.toFixed(2)} mm  (${h_mm >= 0 ? 'rise' : 'depression'})`
+    ];
+
+    const boxX = 20, boxY = 20;
+    ctx.font = '13px -apple-system, sans-serif';
+    const boxW = 280, boxH = 110;
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(boxX, boxY, boxW, boxH);
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+    ctx.fillStyle = '#111';
+    ctx.textAlign = 'left';
+    infoLines.forEach((line, i) => {
+      if (i === infoLines.length - 1) ctx.font = 'bold 13px -apple-system, sans-serif';
+      ctx.fillText(line, boxX + 12, boxY + 22 + i * 18);
+    });
+  }
+
+  function update() {
+    const thetaVal = parseFloat(thetaSlider.value);
+    const liquidVal = liquidSelect.value;
+    thetaLabel.textContent = thetaVal.toFixed(0) + '°';
+    render(thetaVal, liquidVal);
+  }
+
+  thetaSlider.addEventListener('input', update);
+  liquidSelect.addEventListener('change', update);
+
+  update();
+})();
+</script>
+
+</body>
+</html>
