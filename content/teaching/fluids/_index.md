@@ -41,9 +41,9 @@ summary: "
 - [Curved Plate Pressure Simulator](interactive-tools/curved-plate-pressure/)
 - [Cone Viscometer Velocity Profile Simulator](interactive-tools/cone-viscometer/)
 
-## Slides and Handouts :book:
-- [Sampled Slides - Surface Tension & Viscometer](../../files/fluids/Tutorial-2-slides.pdf)
-- [Sample Handotus - Surface Tension & Viscometer](../../files/fluids/Tutorial-2-handout.pdf)
+## Slides and Handout :book:
+- [Sample Slides - Surface Tension & Viscometer](../../files/fluids/Tutorial-2-slides.pdf)
+- [Sample Handout - Surface Tension & Viscometer](../../files/fluids/Tutorial-2-handout.pdf)
 <!-- - [Google Drive](https://drive.google.com/drive/folders/1UJttktjh7cqhusC3yaC5t-AoLlOOup7s?usp=sharing) -->
 
 ## Class Signing Sheet ✍🏻

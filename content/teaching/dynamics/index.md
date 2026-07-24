@@ -45,8 +45,8 @@ summary: "
 
 ## Slides and Handouts :book:
 
-- [Sampled Slides - Projectile Motion (Preview Version)](../../files/fluids/Preview-Lecture-4-Projectile-Motions.pdf)
-- [Sample Handotus - Projectile Motion (Annotated Version)](../../files/fluids/Annotated-Lecture-4-Projectile-Motions.pdf)
+- [Sample Slides - Projectile Motion (Preview Version)](../../files/fluids/Preview-Lecture-4-Projectile-Motions.pdf)
+- [Sample Handout - Projectile Motion (Annotated Version)](../../files/fluids/Annotated-Lecture-4-Projectile-Motions.pdf)
 
 <!-- - [Google Drive](https://drive.google.com/drive/folders/1UJttktjh7cqhusC3yaC5t-AoLlOOup7s?usp=sharing) -->
 
