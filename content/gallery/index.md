@@ -34,7 +34,7 @@ gallery_media_3:
 </style>
 
 This is a collection of flow visualization from my 
-<i><span style="font-weight;"><span style="color: #ef4444;">c</span><span style="color: #f97316;">o</span><span style="color: #eab308;">l</span><span style="color: #22c55e;">o</span><span style="color: #06b6d4;">u</span><span style="color: #3b82f6;">r</span><span style="color: #6366f1;">f</span><span style="color: #a855f7;">u</span><span style="color: #ec4899;">l</span></span></i> 
+<i><span style="font-weight;"><span style="color: #ef4444;">C</span><span style="color: #f97316;">o</span><span style="color: #eab308;">l</span><span style="color: #22c55e;">o</span><span style="color: #06b6d4;">u</span><span style="color: #3b82f6;">r</span><span style="color: #6366f1;">f</span><span style="color: #a855f7;">u</span><span style="color: #ec4899;">l</span></span></i> 
 Fluid Dynamics work.
 
 ### External Flow
