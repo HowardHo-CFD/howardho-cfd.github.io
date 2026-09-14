@@ -72,6 +72,22 @@ showWordCount: false
   }
 </style>
 
+<!-- POSTDOC PROJECT --> 
+<div class="project-row"> 
+<div class="project-img">
+<video src="/img/projects/windfarm-animation.mp4" autoplay loop muted playsinline onclick="openMediaLightbox(this)"></video>
+</div>
+<div class="project-info"> 
+<span class="project-degree">University of Toronto (2026 – Present)</span> 
+<span class="project-degree">ATOMS Laboratory</span> 
+<h3>Wind Farm Turbine Placement with Deep Autoencoders</h3> 
+<div class="project-thesis">Deep-Learning Surrogate Modelling of 3D RANS Simulations for Wind Turbine Layout Optimization</div> <div class="btn-row">
+</div> 
+</div> 
+</div>
+
+---
+
 <!-- PhD PROJECT -->
 <div class="project-row">
 <div class="project-img">
@@ -79,6 +95,7 @@ showWordCount: false
 </div>
 <div class="project-info">
 <span class="project-degree">University of Toronto (2022 – 2026)</span>
+<span class="project-degree">Turbulence Research Lab</span>
 <h3>3D Synthetic Jets in Crossflow & Active Flow Control</h3>
 <div class="project-thesis">Numerical Investigation of 3D Synthetic Jet In Crossflow</div>
 <div class="btn-row">
@@ -98,6 +115,7 @@ showWordCount: false
 </div>
 <div class="project-info">
 <span class="project-degree">University of Toronto (2024 - 2026)</span>
+<span class="project-degree">Faculty of Applied Science and Engineering</span>
 <h3>Learning Analytics & Forum Data to Target Student Support</h3>
 <div class="project-thesis"> Using Forum and Assessment Analytics to Target Student Support Needs in Engineering Dynamics</div>
 <div class="btn-row">
@@ -114,7 +132,7 @@ showWordCount: false
 <img src="/img/projects/MASc-cover.png" alt="M.A.Sc. Research Project" onclick="openMediaLightbox(this)">
 </div>
 <div class="project-info">
-<span class="project-degree">University of Toronto (2019 – 2021)</span>
+<span class="project-degree">Turbulence Research Lab, University of Toronto (2019 – 2021)</span>
 <h3>Backward-Facing Step Flow & Initial SJA Studies</h3>
 <div class="project-thesis">Numerical Investigation on Flow Past A Backward Facing Step and Initial Study of Synthetic Jets</div>
 <div class="btn-row">

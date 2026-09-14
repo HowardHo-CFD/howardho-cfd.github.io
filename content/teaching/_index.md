@@ -94,6 +94,69 @@ Dr. Howard Haonan Ho has over 6 years of higher education teaching experience at
 
 ---
 
+### Workshops 
+
+<style>
+  .course-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+  }
+
+  .course-card {
+    flex: 1;
+    min-width: 220px;
+    background: #1e293b;
+    color: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    display: block;
+  }
+
+  .course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+    background: #273449;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .course-card .course-code {
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: #93c5fd;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    display: block;
+  }
+
+  .course-card .course-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .course-card.disabled {
+    opacity: 0.55;
+    cursor: default;
+    pointer-events: none;
+  }
+</style>
+
+<div class="course-cards">
+
+  <a href="https://www.youtube.com/watch?v=Q8g0kWXS5r4&list=PLX2EDSGwAT14&index=1" class="course-card" target="_blank" rel="noopener">
+    <span class="course-code">YouTube 📺 </span>
+    <span class="course-title">Paraview Workshop</span>
+  </a>
+
+</div>
+
+---
+
 <div style="display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap;">
 
 <div style="flex: 1; min-width: 250px;">
