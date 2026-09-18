@@ -17,8 +17,10 @@
     "\"Any sufficiently advanced technology is indistinguishable from magic.\" — Arthur C. Clarke",
     "\"Never tell me the odds.\" — Han Solo",
     "\"If debugging is the process of removing bugs, then programming must be the process of putting them in.\" — Edsger W. Dijkstra",
-    "Caffeinated, Frustrated, Despaired (CFD)"
+    "Caffeinated, Frustrated, Discouraged (CFD)"
   ];
+
+  // CFD : D for doomed or discouraged (despaired - legacy)
 
   // Fisher-Yates shuffle
   for (let i = quotes.length - 1; i > 0; i--) {

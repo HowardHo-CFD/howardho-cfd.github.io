@@ -38,8 +38,8 @@ summary: "
 
 - [Buoyancy Simulator 🧊](interactive-tools/buoyancy/)
 - [Hydrostatic Pressure Simulator 🤿](interactive-tools/hydrostatic-pressure/)
-- [Curved Plate Pressure Simulator ⚓](interactive-tools/curved-plate-pressure/)
-- [Cone Viscometer Velocity Profile Simulator 🔽](interactive-tools/cone-viscometer/)
+- [Curved Plate Pressure Animation & Simulator ⚓](interactive-tools/curved-plate-pressure/)
+- [Cone Viscometer Velocity Profile Animation & Simulator 🔽](interactive-tools/cone-viscometer/)
 - [Surface Tension Simulator - Droplet 💧](interactive-tools/droplet/)
 - [Surface Tension Simulator - Capillary Tube 🧪](interactive-tools/capillary-tube/)
 - [Bernoulli Equation Simulator - Pipe 🚰](interactive-tools/bernoulli-pipe/)

@@ -10,9 +10,19 @@ build:
 
 {{< katex >}}
 
-Use the slider to change the line plot altitude \\(h\\) and radius \\(r\\), observe how the velocity profile \\(v_\theta\\) change.
+<div class="project-img">
+<video src="/img/teaching/cone-viscometer-velocity.mp4" class=" rounded-lg" autoplay loop muted playsinline onclick="openMediaLightbox(this)"></video>
+</div>
 
-Note that for the 2nd plot, \\(v_\theta\\) was rotated for visualization (technically it should be into/out of the page).
+The video above shows how the velocity profile varies when the altitude h and radius r changes. The height of the cone viscometer is exagerrated to show the linear velocity profiles (real cone viscometers has an average angle of about \\(1^o\\) ). The video below segments the surface into 3 parts with equal height, we can see that as we move upward, the shear force increases eventhough \\(\tau\\) remains constant, this is due to the increase surface area as we move upward.
+
+<div class="project-img">
+<video src="/img/teaching/cone-viscometer-shear-force.mp4" class=" rounded-lg" autoplay loop muted playsinline onclick="openMediaLightbox(this)"></video>
+</div>
+
+
+For the interactive tools below, use the slider to change the line plot altitude \\(h\\) and radius \\(r\\), observe how the velocity profile \\(v_\theta\\) change. <i><span style="font-weight;"><span style="color: #ef4444;">Note that for the 2nd plot, \\(v_\theta\\) was rotated for visualization (technically it should be into/out of the page).
+</span>
 
 <!-- Source Code: [Google Colab](https://colab.research.google.com/drive/1OOirNwnnebM2w55GMmz79ogSlh9vie_a#scrollTo=NtCxuEuoCP6Z) -->
 
