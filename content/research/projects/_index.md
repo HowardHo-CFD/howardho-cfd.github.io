@@ -101,7 +101,7 @@ showWordCount: false
 <div class="btn-row">
 {{< button href="../../files/PhD-thesis.pdf" target="_blank" >}}📥 Thesis (PDF){{< /button >}}
 {{< button href="../../files/posters/2026-MIE-Symposium.pdf" target="_blank" >}}📄 Poster (2026){{< /button >}}
-{{< button href="../../files/posters/SJA-Modelling-Poster.pdf" target="_blank" >}}📄 Poster (2024) {{< /button >}}
+<!-- {{< button href="../../files/posters/SJA-Modelling-Poster.pdf" target="_blank" >}}📄 Poster (2024) {{< /button >}}?\ -->
 </div>
 </div>
 </div>
