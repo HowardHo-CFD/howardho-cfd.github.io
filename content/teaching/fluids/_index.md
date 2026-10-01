@@ -49,6 +49,8 @@ summary: "
 ## Slides and Handout :book:
 - [Sample Slides - Drag Force](../../files/fluids/Drag-slides.pdf)
 - [Sample Handout - Drag Force](../../files/fluids/Drag-handout.pdf)
+- [Sample Slides - Buoyancy and Pressure on Curved Surface](../../files/fluids/Buoyancy-and-Curved-Pressure-slides.pdf)
+- [Sample Handout - Buoyancy and Pressure on Curved Surface](../../files/fluids/Buoyancy-and-Curved-Pressure-handout.pdf)
 <!-- - [Google Drive](https://drive.google.com/drive/folders/1UJttktjh7cqhusC3yaC5t-AoLlOOup7s?usp=sharing) -->
 
 ## Class Signing Sheet ✍🏻
