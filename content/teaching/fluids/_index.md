@@ -53,5 +53,8 @@ summary: "
 - [Sample Handout - Buoyancy and Pressure on Curved Surface](../../files/fluids/Buoyancy-and-Curved-Pressure-handout.pdf)
 <!-- - [Google Drive](https://drive.google.com/drive/folders/1UJttktjh7cqhusC3yaC5t-AoLlOOup7s?usp=sharing) -->
 
+<!-- ## Past Midterms ✍🏻 -->
+<!-- - [2026](midterms/2026) -->
+
 ## Class Signing Sheet ✍🏻
 - [Class of 2024-2025](../../files/fluids/MIE312-2024.jpg)
