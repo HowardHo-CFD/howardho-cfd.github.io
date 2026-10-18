@@ -9,6 +9,8 @@ build:
 ---
 {{< katex >}}
 
+To pause the video, use a laptop based browser and right click to select “Open video in new tab”.
+
 <div class="project-img">
 <video src="/img/teaching/midterms/2026-midterm-1-Q1-animation.mp4" class=" rounded-lg" autoplay loop muted playsinline onclick="openMediaLightbox(this)"></video>
 </div>
