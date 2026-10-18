@@ -36,5 +36,5 @@ summary: "
 
 ## Past Midterms :zap: 
 
-- [2024](interactive-tools/buoyancy/)
-- [2026](interactive-tools/hydrostatic-pressure/)
+<!-- - [2024](interactive-tools/buoyancy/) -->
+- [2026](2026)
