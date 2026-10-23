@@ -1,12 +1,10 @@
 ---
-title: "MIE 312 Fluids"
+title: "MIE 312 Fluids - 2026"
 layout: "simple"
 showDate: false
 showReadingTime: false
 showWordCount: false
-summary: " 
-    :zap: midterms
-    :books: Slides and Handouts"
+summary: " "
 ---
 
 <style>
@@ -34,27 +32,32 @@ summary: "
 
 <div style="background: rgba(15, 23, 42, 0.5); padding: 2rem; border-radius: 12px; backdrop-filter: blur(8px); color: #ffffff;">
 
-## Tutorial Slides: 
-For non-annotated version or example question's solution, please email me directly at (howard.ho@mail.utoronto.ca)
+## 2026 - Tutorial Slides:
+
+<!-- For non-annotated version or example question's solution, please email me directly at (howard.ho@mail.utoronto.ca) -->
 
 
 - [Tutorial 1 - Ch.1 -Viscosity](/files/fluids/2026/Tutorial-1-Ch1-Viscosity-Annotated.pdf)
 
 - [Tutorial 2 - Ch.1 - Surface Effect and Viscometer](/files/fluids/2026/Tutorial-2-Ch1-Surface-Effect-and-Viscometer-Annotated.pdf)
 
-- [Tutorial 3 - Ch.2 - Hydrostatic Pressure](../../files/fluids/2026/Tutorial3-Ch2-Hydrostatic-Pressure-Annotated.pdf)
+- [Tutorial 3 - Ch.2 - Hydrostatic Pressure](/files/fluids/2026/Tutorial-3-Ch2-Hydrostatic-Pressure-Annotated.pdf)
 
-- [Supplementary Slides - Ch.2 Buoyancy and Pressure on Curved Surface](../../files/fluids/2026/Buoyancy-and-Curved-Pressure-Slides.pdf)
+- [No Tutorial 4 (Midtemr 1 Overlap) - Supplementary Slides - Ch.2 Buoyancy and Pressure on Curved Surface](/files/fluids/2026/Buoyancy-and-Curved-Pressure-Slides.pdf)
 
-- [Tutorial 5 - Ch.3 - RTT - Mass and Linear Momentum](../../files/fluids/2026/RTT-Mass-and-Linear-Momentum-Annotated.pdf)
+- [Tutorial 5 - Ch.3 - RTT - Mass and Linear Momentum](/files/fluids/2026/Tutorial-5-Ch3-RTT-Mass-and-Linear-Momentum-Annotated.pdf)
 
-- [Tutorial 6 - Ch.3 - RTT - Mass and Linear Momentum](../../files/fluids/2026/RTT-Moving-CV-and-Angular-Momentum-Annotated.pdf)
+- [Tutorial 6 - Ch.3 - RTT - Mass and Linear Momentum](/files/fluids/2026/Tutorial-6-Ch3-RTT-Moving-CV-and-Angular-Momentum.pdf)
 
-- [Tutorial 11 - Buoyancy and Pressure on Curved Surface](../../files/fluids/2026/Tutorial-10-Ch6-Pipe-Flow.pdf)
-- [Tutorial 11 - Drag Force](../../files/fluids/2026/Tutorial-11-Drag-Force.pdf)
+- No Tutorial 8 (Midterm 2 Overlap)
+
+- [Tutorial 10 - Ch.6 - Pipe Flow](/files/fluids/2026/Tutorial-10-Ch6-Pipe-Flow.pdf)
+
+- [Tutorial 11 - Ch.7 - External Flow](/files/fluids/2026/Tutorial-11-Ch7-Drag-Force.pdf)
 
 ## Tutorial Handout:
-- [Sample Handout - Drag Force](../../files/fluids/Drag-handout.pdf)
+- [Tutorial 11 - Drag Force](/files/fluids/Drag-handout.pdf)
 
 ## Past Midterms :zap: 
-- [2026](../midterms/2026)
+- [2026-1](../midterms/2026)
+- [2026-2](midterms/)
