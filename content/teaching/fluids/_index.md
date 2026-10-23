@@ -46,14 +46,14 @@ summary: "
 
 - [Bernoulli Equation Simulator - Airfoil ✈](interactive-tools/bernoulli-airfoil/)
 
-## Slides and Handout :book:
-- [Sample Slides - Drag Force](../../files/fluids/Drag-slides.pdf)
-- [Sample Handout - Drag Force](../../files/fluids/Drag-handout.pdf)
-- [Sample Slides - Buoyancy and Pressure on Curved Surface](../../files/fluids/Buoyancy-and-Curved-Pressure-slides.pdf)
-- [Sample Handout - Buoyancy and Pressure on Curved Surface](../../files/fluids/Buoyancy-and-Curved-Pressure-handout.pdf)
+## Sampple Slides and Handout :book:
+- [Slides - Drag Force](../../files/fluids/Drag-slides.pdf)
+- [Handout - Drag Force](../../files/fluids/Drag-handout.pdf)
+- [Slides - Buoyancy and Pressure on Curved Surface](../../files/fluids/Buoyancy-and-Curved-Pressure-slides.pdf)
+- [Handout - Buoyancy and Pressure on Curved Surface](../../files/fluids/Buoyancy-and-Curved-Pressure-handout.pdf)
 <!-- - [Google Drive](https://drive.google.com/drive/folders/1UJttktjh7cqhusC3yaC5t-AoLlOOup7s?usp=sharing) -->
 
-## Course Materials -->
+## Course Materials 🗂
 - [2026](2026)
 
 ## Class Signing Sheet ✍🏻

@@ -32,7 +32,7 @@ summary: " "
 
 <div style="background: rgba(15, 23, 42, 0.5); padding: 2rem; border-radius: 12px; backdrop-filter: blur(8px); color: #ffffff;">
 
-## 2026 - Tutorial Slides:
+## 2026 - Tutorial Slides 📊
 
 <!-- For non-annotated version or example question's solution, please email me directly at (howard.ho@mail.utoronto.ca) -->
 
@@ -49,14 +49,15 @@ summary: " "
 
 - [Tutorial 6 - Ch.3 - RTT - Moving CV and Angular Momentum](/files/fluids/2026/Tutorial-6-Ch3-RTT-Moving-CV-and-Angular-Momentum.pdf)
 
+- [Tutorial 7 - Ch.4 \& Ch.5 - Differential Relations \& Dimensional Analysis (pdf ready soon)]
+
 - No Tutorial 8 (Midterm 2 Overlap)
+
+- [Tutorial 9 - Ch.7 - RTT - Bernoulli Equation and Energy (pdf ready soon)]
 
 - [Tutorial 10 - Ch.6 - Pipe Flow](/files/fluids/2026/Tutorial-10-Ch6-Pipe-Flow.pdf)
 
 - [Tutorial 11 - Ch.7 - External Flow](/files/fluids/2026/Tutorial-11-Ch7-Drag-Force.pdf)
-
-## Tutorial Handout:
-- [Tutorial 11 - Drag Force](/files/fluids/Drag-handout.pdf)
 
 ## Past Midterms :zap: 
 - [2026-1](../midterms/2026)
