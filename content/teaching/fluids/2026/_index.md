@@ -43,11 +43,11 @@ summary: " "
 
 - [Tutorial 3 - Ch.2 - Hydrostatic Pressure](/files/fluids/2026/Tutorial-3-Ch2-Hydrostatic-Pressure-Annotated.pdf)
 
-- [No Tutorial 4 (Midtemr 1 Overlap) - Supplementary Slides - Ch.2 Buoyancy and Pressure on Curved Surface](/files/fluids/2026/Buoyancy-and-Curved-Pressure-Slides.pdf)
+- No Tutorial 4 (Midtemr 1 Overlap) - [Supplementary Slides - Ch.2 Buoyancy and Pressure on Curved Surface](/files/fluids/2026/Buoyancy-and-Curved-Pressure-Slides.pdf)
 
 - [Tutorial 5 - Ch.3 - RTT - Mass and Linear Momentum](/files/fluids/2026/Tutorial-5-Ch3-RTT-Mass-and-Linear-Momentum-Annotated.pdf)
 
-- [Tutorial 6 - Ch.3 - RTT - Mass and Linear Momentum](/files/fluids/2026/Tutorial-6-Ch3-RTT-Moving-CV-and-Angular-Momentum.pdf)
+- [Tutorial 6 - Ch.3 - RTT - Moving CV and Angular Momentum](/files/fluids/2026/Tutorial-6-Ch3-RTT-Moving-CV-and-Angular-Momentum.pdf)
 
 - No Tutorial 8 (Midterm 2 Overlap)
 
