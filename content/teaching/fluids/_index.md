@@ -42,6 +42,9 @@ summary: "
 - [Cone Viscometer Velocity Profile Animation & Simulator 🔽](interactive-tools/cone-viscometer/)
 - [Surface Tension Simulator - Droplet 💧](interactive-tools/droplet/)
 - [Surface Tension Simulator - Capillary Tube 🧪](interactive-tools/capillary-tube/)
+
+- [Differential Relations & Vorticity Animation 🌀](interactive-tools/differential-relations/)
+
 - [Bernoulli Equation Simulator - Pipe 🚰](interactive-tools/bernoulli-pipe/)
 
 - [Bernoulli Equation Simulator - Airfoil ✈](interactive-tools/bernoulli-airfoil/)
