@@ -69,3 +69,7 @@ mainSections = ["posts"]
 
 [taxonomy]
   showTermCount = true
+
+[umamiAnalytics]
+  websiteid = "e4edc2b5-790c-4180-a59a-2e86abaf17ed"
+  domain = "cloud.umami.is"
