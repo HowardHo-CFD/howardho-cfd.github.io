@@ -75,6 +75,11 @@ Dr. Howard Haonan Ho has over 6 years of higher education teaching experience at
 
 <div class="course-cards">
 
+  <a href="sustainable-energy/" class="course-card">
+    <span class="course-code">CIV 380</span>
+    <span class="course-title">Sustainable Energy Systems</span>
+  </a>
+
   <a href="fluids/" class="course-card">
     <span class="course-code">MIE 312</span>
     <span class="course-title">Fluid Mechanics</span>
@@ -163,6 +168,7 @@ Dr. Howard Haonan Ho has over 6 years of higher education teaching experience at
 
 ### Teaching Experience
 
+- **Course Coordinator**, CIV 380 Susbtainable Energy Systems *(Winter 2027)*
 - **Course Instructor**, MIE 100 Dynamics *(Winter 2024)*
 - **Teaching Assistant**, MIE 312 Fluids *(2024 – 2026)*
 - **Teaching Assistant**, MIE 507 HVAC *(2025 – 2026)*

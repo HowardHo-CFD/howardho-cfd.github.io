@@ -60,5 +60,5 @@ summary: " "
 - [Tutorial 11 - Ch.7 - External Flow](/files/fluids/2026/Tutorial-11-Ch7-Drag-Force.pdf)
 
 ## Past Midterms :zap: 
-- [2026-1](../midterms/2026)
-- [2026-2](midterms/)
+- [2026-1](midterm-1)
+- [2026-2](midterm-2)

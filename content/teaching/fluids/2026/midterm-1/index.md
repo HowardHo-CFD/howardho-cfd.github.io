@@ -1,6 +1,8 @@
 ---
 title: "2026 - 1"
 layout: "simple"
+aliases:
+  - /teaching/fluids/midterms/2026/
 showDate: false
 showReadingTime: false
 showWordCount: false

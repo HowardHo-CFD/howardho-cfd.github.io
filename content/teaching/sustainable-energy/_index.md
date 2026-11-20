@@ -1,11 +1,12 @@
 ---
-title: "MIE 312 Fluids"
+title: "CIV 380 Sustainable Energy Systems"
 layout: "simple"
 showDate: false
+showTitle: false
 showReadingTime: false
 showWordCount: false
 summary: " 
-    :zap: midterms
+    :zap: Interactive Tools
     :books: Slides and Handouts"
 ---
 
@@ -18,7 +19,7 @@ summary: "
   /* Layer a dark top gradient over the background photo */
   body {
     background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 15%), 
-                      url('/img/backgrounds/fluids-bg-3.jpg') !important;
+                      url('/img/backgrounds/dynamics-bg-cropped.JPG') !important;
     background-size: cover !important;
     background-position: center !important;
     background-attachment: fixed !important;
@@ -31,10 +32,18 @@ summary: "
   }
 </style>
 
-
 <div style="background: rgba(15, 23, 42, 0.5); padding: 2rem; border-radius: 12px; backdrop-filter: blur(8px); color: #ffffff;">
 
-## Past Midterms :zap: 
+# CIV 380 Sustainable Energy Systems
 
-<!-- - [2024](interactive-tools/buoyancy/) -->
-- [2026](2026)
+<!-- ## Interactive Tools :zap:
+
+- [Damped Vibration Simulator](interactive-tools/vibration/)
+
+## Slides and Handouts :book:
+
+- [Sample Slides - Projectile Motion (Annotated Version)](../../files/fluids/Annotated-Lecture-4-Projectile-Motions.pdf) -->
+
+<!-- ## Class Signing Sheet ✍🏻
+- [Class of 2024 (Course Instructor)](../../files/fluids/MIE100-2024.jpg)
+- [Class of 2025 (TA)](../../files/fluids/MIE100-2025.jpg) -->
