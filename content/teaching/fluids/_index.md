@@ -37,13 +37,20 @@ summary: "
 ## Interactive Tools :zap: 
 
 - [Buoyancy Simulator 🧊](interactive-tools/buoyancy/)
+
 - [Hydrostatic Pressure Simulator 🤿](interactive-tools/hydrostatic-pressure/)
+
 - [Curved Plate Pressure Animation & Simulator ⚓](interactive-tools/curved-plate-pressure/)
+
 - [Cone Viscometer Velocity Profile Animation & Simulator 🔽](interactive-tools/cone-viscometer/)
+
 - [Surface Tension Simulator - Droplet 💧](interactive-tools/droplet/)
+
 - [Surface Tension Simulator - Capillary Tube 🧪](interactive-tools/capillary-tube/)
 
 - [Differential Relations & Vorticity Animation 🌀](interactive-tools/differential-relations/)
+
+- [Streamlines vs Streaklines vs Pathlines 🎏](interactive-tools/streamlines-streaklines-pathlines/)
 
 - [Bernoulli Equation Simulator - Pipe 🚰](interactive-tools/bernoulli-pipe/)
 
