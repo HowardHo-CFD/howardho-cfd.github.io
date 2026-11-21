@@ -51,7 +51,7 @@ summary: " "
 
 - [Tutorial 7 - Ch.4 \& Ch.5 - Differential Relations \& Dimensional Analysis](/files/fluids/2026/Tutorial-7-Ch4&5-Differential-Relations-and-Dimensional-Analysis.pdf)
 
-- No Tutorial 8 (Midterm 2 Overlap)
+- No Tutorial 8 (Midterm 2 Overlap) - [Supplementary Slides - Ch.4 Navier-Stokes Equations Couette \& Poiseuille Flow](/files/fluids/2026/Navier-Stokes-Couette-Poiseuille-Flow-Slides.pdf)
 
 - [Tutorial 9 - Ch.3 - RTT - Bernoulli Equation and Energy](/files/fluids/2026/Tutorial-9-Ch3-RTT-Bernoulli-and-Energy-Transport.pdf)
 
